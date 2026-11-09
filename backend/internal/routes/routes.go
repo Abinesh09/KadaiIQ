@@ -19,6 +19,13 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, dbManager *database.DBManag
 	app.Use(logger.New(logger.Config{
 		Format: "[${time}] ${status} - ${latency} ${method} ${path}\n",
 	}))
+	app.Use(func(c *fiber.Ctx) error {
+		c.Set("X-Content-Type-Options", "nosniff")
+		c.Set("X-Frame-Options", "DENY")
+		c.Set("X-XSS-Protection", "1; mode=block")
+		c.Set("Referrer-Policy", "strict-origin-when-cross-origin")
+		return c.Next()
+	})
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "http://localhost:7070,http://127.0.0.1:7070,http://localhost:5173",
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization, X-Tenant-ID",

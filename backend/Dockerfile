@@ -19,7 +19,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /app/api-server ./cmd/
 # Production scratch/alpine container
 FROM alpine:3.20
 
-RUN apk --no-cache add ca-certificates tzdata
+RUN apk --no-cache add ca-certificates tzdata && \
+    adduser -D -u 10001 kadaiuser
 
 WORKDIR /app
 
@@ -27,6 +28,8 @@ COPY --from=builder /app/api-server /app/api-server
 
 ENV PORT=8080
 ENV APP_ENV=production
+
+USER kadaiuser
 
 EXPOSE 8080
 
