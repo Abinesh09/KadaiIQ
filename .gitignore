@@ -1,0 +1,34 @@
+# Environment and secrets
+.env
+.env*.local
+*.pem
+*.key
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Go Build artifacts
+backend/api-server
+backend/*.exe
+backend/*.test
+backend/bin/
+
+# Node & Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Database & Docker volumes
+postgres_data/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo

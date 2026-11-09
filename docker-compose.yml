@@ -1,0 +1,63 @@
+services:
+  # Database Layer
+  postgres:
+    image: postgres:16-alpine
+    container_name: kadai-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-kadai_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kadai_password}
+      POSTGRES_DB: ${POSTGRES_DB:-kadai_iq}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kadai_user} -d ${POSTGRES_DB:-kadai_iq}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - kadai-net
+
+  # Backend Layer (Go + Fiber + GORM)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kadai-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+      APP_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-kadai_user}:${POSTGRES_PASSWORD:-kadai_password}@postgres:5432/${POSTGRES_DB:-kadai_iq}?sslmode=disable
+      JWT_SECRET: ${JWT_SECRET:-supersecret_jwt_key_change_in_production}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - kadai-net
+
+  # Frontend Layer (React + Vite + shadcn/ui on Port 7070)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: kadai-frontend
+    restart: unless-stopped
+    ports:
+      - "7070:7070"
+    depends_on:
+      - backend
+    networks:
+      - kadai-net
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  kadai-net:
+    driver: bridge
