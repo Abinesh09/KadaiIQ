@@ -259,6 +259,92 @@ export interface CategorySalesData {
   percentage: string | number
 }
 
+export interface BestSellingMetricData {
+  label: string
+  sales: string | number
+  units: number
+}
+
+export interface SalesPerformanceSummaryData {
+  period_type: string
+  start_date: string
+  end_date: string
+  gross_sales: string | number
+  total_discounts: string | number
+  total_returns: string | number
+  total_tax: string | number
+  net_sales: string | number
+  amount_collected: string | number
+  cogs: string | number
+  gross_profit: string | number
+  profit_margin_pct: string | number
+  total_bills: number
+  total_units_sold: number
+  average_bill_value: string | number
+  average_daily_sales: string | number
+  best_selling_day?: BestSellingMetricData
+  best_selling_month?: BestSellingMetricData
+  prev_gross_sales: string | number
+  prev_net_sales: string | number
+  prev_units_sold: number
+  prev_total_bills: number
+  sales_growth_pct: string | number
+  bills_growth_pct: string | number
+}
+
+export interface DailyBreakdownItemData {
+  date: string
+  bills: number
+  units_sold: number
+  gross_sales: string | number
+  discounts: string | number
+  returns: string | number
+  tax_amount: string | number
+  net_sales: string | number
+}
+
+export interface MonthlyBreakdownItemData {
+  month: number
+  month_name: string
+  year: number
+  bills: number
+  units_sold: number
+  gross_sales: string | number
+  discounts: string | number
+  returns: string | number
+  net_sales: string | number
+}
+
+export interface DetailedProductPerformanceItemData {
+  product_id?: string
+  product_name: string
+  product_code: string
+  sku?: string
+  barcode?: string
+  brand_name: string
+  category_name: string
+  size?: string
+  colour?: string
+  units_sold: number
+  gross_sales: string | number
+  discounts: string | number
+  returns: string | number
+  net_sales: string | number
+  cost_of_goods: string | number
+  gross_profit: string | number
+  profit_margin: string | number
+  stock_on_hand: number
+  status: 'BEST_SELLER' | 'ACTIVE' | 'SLOW_MOVING' | 'ZERO_SALES' | string
+}
+
+export interface ProductPerformanceResponseData {
+  top_selling: DetailedProductPerformanceItemData[]
+  slow_moving: DetailedProductPerformanceItemData[]
+  zero_sales: DetailedProductPerformanceItemData[]
+  all_products: DetailedProductPerformanceItemData[]
+  total_products: number
+}
+
 export interface VariantAttributeData {
   attribute_type: string
   attribute_value: string
@@ -825,6 +911,75 @@ export const apiService = {
     const data = await res.json()
     if (!res.ok) throw new Error(data.message || 'Failed to fetch footwear intelligence')
     return data
+  },
+
+  async getSalesPerformance(params?: { range?: string; from?: string; to?: string }): Promise<ApiResponse<SalesPerformanceSummaryData>> {
+    const query = new URLSearchParams()
+    if (params?.range) query.set('range', params.range)
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+
+    const res = await fetch(`${BASE_URL}/analytics/performance?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch sales performance')
+    return data
+  },
+
+  async getDailyBreakdown(params?: { range?: string; from?: string; to?: string }): Promise<ApiResponse<DailyBreakdownItemData[]>> {
+    const query = new URLSearchParams()
+    if (params?.range) query.set('range', params.range)
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+
+    const res = await fetch(`${BASE_URL}/analytics/daily?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch daily breakdown')
+    return data
+  },
+
+  async getMonthlyBreakdown(params?: { range?: string; from?: string; to?: string }): Promise<ApiResponse<MonthlyBreakdownItemData[]>> {
+    const query = new URLSearchParams()
+    if (params?.range) query.set('range', params.range)
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+
+    const res = await fetch(`${BASE_URL}/analytics/monthly?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch monthly breakdown')
+    return data
+  },
+
+  async getDetailedProductPerformance(params?: { range?: string; from?: string; to?: string }): Promise<ApiResponse<ProductPerformanceResponseData>> {
+    const query = new URLSearchParams()
+    if (params?.range) query.set('range', params.range)
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+
+    const res = await fetch(`${BASE_URL}/analytics/products/detailed?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch product performance')
+    return data
+  },
+
+  async downloadExcelReport(params?: { range?: string; from?: string; to?: string }): Promise<Blob> {
+    const query = new URLSearchParams()
+    if (params?.range) query.set('range', params.range)
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+
+    const res = await fetch(`${BASE_URL}/analytics/export/excel?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    if (!res.ok) throw new Error('Failed to download Excel report')
+    return await res.blob()
   },
 
   // GST Endpoints

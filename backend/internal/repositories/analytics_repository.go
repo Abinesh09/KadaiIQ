@@ -3,6 +3,7 @@ package repositories
 import (
 	"time"
 
+	"github.com/Abinesh09/KadaiIQ/backend/internal/models"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
@@ -40,7 +41,7 @@ func (r *AnalyticsRepository) GetSalesAggregates(tenantID uuid.UUID, start, end 
 			COALESCE(SUM(tax_amount), 0) as total_tax,
 			COALESCE(SUM(subtotal), 0) as net_sales
 		`).
-		Where("tenant_id = ? AND sale_date >= ? AND sale_date <= ? AND status != 'CANCELLED'", tenantID, start, end).
+		Where("tenant_id = ? AND sale_date >= ? AND sale_date <= ? AND status != 'CANCELLED' AND status != 'RETURNED'", tenantID, start, end).
 		Scan(&agg).Error
 
 	if err != nil {
@@ -59,7 +60,7 @@ func (r *AnalyticsRepository) GetItemsAggregates(tenantID uuid.UUID, start, end 
 			COALESCE(SUM(sale_items.quantity), 0) as total_units_sold,
 			COALESCE(SUM(product_variants.purchase_price * sale_items.quantity), 0) as estimated_cost
 		`).
-		Where("sale_items.tenant_id = ? AND sales.sale_date >= ? AND sales.sale_date <= ? AND sales.status != 'CANCELLED'", tenantID, start, end).
+		Where("sale_items.tenant_id = ? AND sales.sale_date >= ? AND sales.sale_date <= ? AND sales.status != 'CANCELLED' AND sales.status != 'RETURNED'", tenantID, start, end).
 		Scan(&agg).Error
 
 	if err != nil {
@@ -245,4 +246,160 @@ func (r *AnalyticsRepository) GetTopBrands(tenantID uuid.UUID, start, end time.T
 		Scan(&results).Error
 
 	return results, err
+}
+
+type ReturnMetrics struct {
+	TotalReturns decimal.Decimal `gorm:"column:total_returns"`
+	ReturnBills  int64           `gorm:"column:return_bills"`
+}
+
+// GetReturnsMetrics calculates total sales returns
+func (r *AnalyticsRepository) GetReturnsMetrics(tenantID uuid.UUID, start, end time.Time) (*ReturnMetrics, error) {
+	var m ReturnMetrics
+	err := r.db.Table("sales").
+		Select(`
+			COALESCE(SUM(grand_total), 0) as total_returns,
+			COUNT(id) as return_bills
+		`).
+		Where("tenant_id = ? AND sale_date >= ? AND sale_date <= ? AND status = 'RETURNED'", tenantID, start, end).
+		Scan(&m).Error
+
+	return &m, err
+}
+
+type DetailedDailyRow struct {
+	Date       string          `gorm:"column:date"`
+	Bills      int64           `gorm:"column:bills"`
+	UnitsSold  int64           `gorm:"column:units_sold"`
+	GrossSales decimal.Decimal `gorm:"column:gross_sales"`
+	Discounts  decimal.Decimal `gorm:"column:discounts"`
+	Returns    decimal.Decimal `gorm:"column:returns"`
+	TaxAmount  decimal.Decimal `gorm:"column:tax_amount"`
+	NetSales   decimal.Decimal `gorm:"column:net_sales"`
+}
+
+// GetDetailedDailyBreakdown returns date-by-date breakdown with discounts and returns
+func (r *AnalyticsRepository) GetDetailedDailyBreakdown(tenantID uuid.UUID, start, end time.Time) ([]DetailedDailyRow, error) {
+	var rows []DetailedDailyRow
+	err := r.db.Table("sales").
+		Select(`
+			DATE(sales.sale_date) as date,
+			COUNT(CASE WHEN sales.status != 'CANCELLED' AND sales.status != 'RETURNED' THEN sales.id END) as bills,
+			COALESCE(SUM(CASE WHEN sales.status != 'CANCELLED' AND sales.status != 'RETURNED' THEN sales.grand_total ELSE 0 END), 0) as gross_sales,
+			COALESCE(SUM(CASE WHEN sales.status != 'CANCELLED' AND sales.status != 'RETURNED' THEN sales.discount ELSE 0 END), 0) as discounts,
+			COALESCE(SUM(CASE WHEN sales.status = 'RETURNED' THEN sales.grand_total ELSE 0 END), 0) as returns,
+			COALESCE(SUM(CASE WHEN sales.status != 'CANCELLED' AND sales.status != 'RETURNED' THEN sales.tax_amount ELSE 0 END), 0) as tax_amount,
+			COALESCE(SUM(CASE WHEN sales.status != 'CANCELLED' AND sales.status != 'RETURNED' THEN sales.subtotal ELSE 0 END), 0) as net_sales
+		`).
+		Where("sales.tenant_id = ? AND sales.sale_date >= ? AND sales.sale_date <= ? AND sales.status != 'CANCELLED'", tenantID, start, end).
+		Group("DATE(sales.sale_date)").
+		Order("date ASC").
+		Scan(&rows).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range rows {
+		var units int64
+		_ = r.db.Table("sale_items").
+			Joins("JOIN sales ON sale_items.sale_id = sales.id").
+			Where("sale_items.tenant_id = ? AND DATE(sales.sale_date) = ? AND sales.status != 'CANCELLED' AND sales.status != 'RETURNED'", tenantID, rows[i].Date).
+			Select("COALESCE(SUM(sale_items.quantity), 0)").
+			Scan(&units)
+		rows[i].UnitsSold = units
+	}
+
+	return rows, nil
+}
+
+type ProductSalesDeepRow struct {
+	ProductID     uuid.UUID       `gorm:"column:product_id"`
+	VariantID     uuid.UUID       `gorm:"column:variant_id"`
+	ProductName   string          `gorm:"column:product_name"`
+	ProductCode   string          `gorm:"column:product_code"`
+	SKU           string          `gorm:"column:sku"`
+	Barcode       string          `gorm:"column:barcode"`
+	BrandName     string          `gorm:"column:brand_name"`
+	CategoryName  string          `gorm:"column:category_name"`
+	Size          string          `gorm:"column:size"`
+	Colour        string          `gorm:"column:colour"`
+	PurchasePrice decimal.Decimal `gorm:"column:purchase_price"`
+	UnitsSold     int64           `gorm:"column:units_sold"`
+	GrossSales    decimal.Decimal `gorm:"column:gross_sales"`
+	Discounts     decimal.Decimal `gorm:"column:discounts"`
+	NetSales      decimal.Decimal `gorm:"column:net_sales"`
+	CostOfGoods   decimal.Decimal `gorm:"column:cost_of_goods"`
+	CurrentStock  int             `gorm:"column:current_stock"`
+}
+
+// GetDeepProductSales returns detailed metrics including catalogue products that had 0 sales
+func (r *AnalyticsRepository) GetDeepProductSales(tenantID uuid.UUID, start, end time.Time) ([]ProductSalesDeepRow, error) {
+	var rows []ProductSalesDeepRow
+	err := r.db.Table("product_variants").
+		Joins("JOIN products ON product_variants.product_id = products.id").
+		Joins("LEFT JOIN brands ON products.brand_id = brands.id").
+		Joins("LEFT JOIN categories ON products.category_id = categories.id").
+		Select(`
+			products.id as product_id,
+			product_variants.id as variant_id,
+			products.name as product_name,
+			products.product_code,
+			product_variants.sku,
+			product_variants.barcode,
+			COALESCE(brands.name, 'Generic') as brand_name,
+			COALESCE(categories.name, 'Footwear') as category_name,
+			product_variants.size,
+			product_variants.colour,
+			product_variants.purchase_price,
+			product_variants.current_stock
+		`).
+		Where("product_variants.tenant_id = ? AND products.status != 'archived'", tenantID).
+		Scan(&rows).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range rows {
+		type aggItem struct {
+			Units       int64           `gorm:"column:units"`
+			Gross       decimal.Decimal `gorm:"column:gross"`
+			Discounts   decimal.Decimal `gorm:"column:discounts"`
+			LineTotal   decimal.Decimal `gorm:"column:line_total"`
+			CostOfGoods decimal.Decimal `gorm:"column:cogs"`
+		}
+		var agg aggItem
+		_ = r.db.Table("sale_items").
+			Joins("JOIN sales ON sale_items.sale_id = sales.id").
+			Select(`
+				COALESCE(SUM(sale_items.quantity), 0) as units,
+				COALESCE(SUM(sale_items.unit_price * sale_items.quantity), 0) as gross,
+				COALESCE(SUM(sale_items.discount), 0) as discounts,
+				COALESCE(SUM(sale_items.line_total), 0) as line_total,
+				COALESCE(SUM(sale_items.quantity), 0) as cogs
+			`).
+			Where("sale_items.tenant_id = ? AND (sale_items.variant_id = ? OR (sale_items.barcode != '' AND sale_items.barcode = ?)) AND sales.sale_date >= ? AND sales.sale_date <= ? AND sales.status != 'CANCELLED'",
+				tenantID, rows[i].VariantID, rows[i].Barcode, start, end).
+			Scan(&agg)
+
+		rows[i].UnitsSold = agg.Units
+		rows[i].GrossSales = agg.Gross
+		rows[i].Discounts = agg.Discounts
+		rows[i].NetSales = agg.LineTotal
+		rows[i].CostOfGoods = rows[i].PurchasePrice.Mul(decimal.NewFromInt(agg.Units))
+	}
+
+	return rows, nil
+}
+
+// GetRawTransactions returns sales with line items for a date range
+func (r *AnalyticsRepository) GetRawTransactions(tenantID uuid.UUID, start, end time.Time) ([]models.Sale, error) {
+	var sales []models.Sale
+	err := r.db.Where("tenant_id = ? AND sale_date >= ? AND sale_date <= ?", tenantID, start, end).
+		Preload("Items").
+		Order("sale_date DESC").
+		Limit(1000).
+		Find(&sales).Error
+	return sales, err
 }
