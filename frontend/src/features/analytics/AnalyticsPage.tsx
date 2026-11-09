@@ -246,7 +246,7 @@ export const AnalyticsPage: React.FC = () => {
       </div>
 
       {/* Date Range Selector Bar */}
-      <Card className="border-slate-200">
+      <Card className="border-[#E5EAF0] shadow-2xs">
         <CardContent className="p-3.5 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-1.5">
             {[
@@ -262,10 +262,10 @@ export const AnalyticsPage: React.FC = () => {
               <button
                 key={p.id}
                 onClick={() => setDateRange(p.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   dateRange === p.id
-                    ? 'bg-slate-900 text-white shadow-sm'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-[#EDE9FE] text-[#5B45B5] border border-[#8B5CF6]/30 shadow-2xs'
+                    : 'bg-white text-[#64748B] hover:text-[#5B45B5] hover:bg-[#F5F3FF] border border-[#E5EAF0]'
                 }`}
               >
                 {p.label}
@@ -462,9 +462,9 @@ export const AnalyticsPage: React.FC = () => {
         </Card>
       </div>
 
-      {/* Main Analytics Tabs Bar (Single-Selection Segmented Control) */}
+      {/* Main Analytics Tabs Bar (Single-Selection Soft Lavender & Deep Purple) */}
       <div className="bg-[#F5F7FA] p-1.5 rounded-xl border border-[#E5EAF0] overflow-x-auto scrollbar-none">
-        <div className="flex items-center gap-1 min-w-max">
+        <div className="flex items-center gap-1.5 min-w-max">
           {[
             { id: 'trends', label: 'Sales Trajectory', icon: TrendingUp },
             { id: 'daily', label: 'Daily Breakdown', icon: CalendarDays },
@@ -484,11 +484,11 @@ export const AnalyticsPage: React.FC = () => {
                 className={cn(
                   'flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap',
                   isActive
-                    ? 'bg-white text-[#172B4D] shadow-xs border border-[#E5EAF0]'
-                    : 'text-[#64748B] hover:text-[#172033] hover:bg-white/60 border border-transparent'
+                    ? 'bg-[#EDE9FE] text-[#5B45B5] shadow-xs border border-[#8B5CF6]/30'
+                    : 'text-[#64748B] hover:text-[#5B45B5] hover:bg-[#F5F3FF] border border-transparent'
                 )}
               >
-                <Icon className={cn('w-3.5 h-3.5 shrink-0', isActive ? 'text-[#16A36A]' : 'text-[#64748B]')} />
+                <Icon className={cn('w-3.5 h-3.5 shrink-0', isActive ? 'text-[#8B5CF6]' : 'text-[#64748B]')} />
                 <span>{tab.label}</span>
               </button>
             )
@@ -704,34 +704,37 @@ export const AnalyticsPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={() => setProductSubTab('top')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   productSubTab === 'top'
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-[#EDE9FE] text-[#5B45B5] border border-[#8B5CF6]/30 shadow-2xs'
+                    : 'bg-white text-[#64748B] hover:text-[#5B45B5] hover:bg-[#F5F3FF] border border-[#E5EAF0]'
                 }`}
               >
                 Top-Selling Products ({productPerf?.top_selling.length || 0})
               </button>
               <button
+                type="button"
                 onClick={() => setProductSubTab('slow')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   productSubTab === 'slow'
-                    ? 'bg-amber-600 text-white shadow-sm'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-[#EDE9FE] text-[#5B45B5] border border-[#8B5CF6]/30 shadow-2xs'
+                    : 'bg-white text-[#64748B] hover:text-[#5B45B5] hover:bg-[#F5F3FF] border border-[#E5EAF0]'
                 }`}
               >
                 Slow-Moving ({productPerf?.slow_moving.length || 0})
               </button>
               <button
+                type="button"
                 onClick={() => setProductSubTab('zero')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1 ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer ${
                   productSubTab === 'zero'
-                    ? 'bg-rose-600 text-white shadow-sm'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-[#EDE9FE] text-[#5B45B5] border border-[#8B5CF6]/30 shadow-2xs'
+                    : 'bg-white text-[#64748B] hover:text-[#5B45B5] hover:bg-[#F5F3FF] border border-[#E5EAF0]'
                 }`}
               >
-                <AlertTriangle className="w-3.5 h-3.5" />
+                <AlertTriangle className={cn('w-3.5 h-3.5', productSubTab === 'zero' ? 'text-[#8B5CF6]' : 'text-amber-500')} />
                 Zero-Sales Alert ({productPerf?.zero_sales.length || 0})
               </button>
             </div>

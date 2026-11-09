@@ -151,10 +151,10 @@ export const DashboardPage: React.FC = () => {
               <button
                 key={btn.id}
                 onClick={() => setPeriod(btn.id)}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
+                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
                   period === btn.id
-                    ? 'bg-white text-[#172033] shadow-2xs font-semibold'
-                    : 'text-[#64748B] hover:text-[#172033]'
+                    ? 'bg-[#EDE9FE] text-[#5B45B5] shadow-xs border border-[#8B5CF6]/30'
+                    : 'text-[#64748B] hover:text-[#5B45B5] hover:bg-[#F5F3FF]'
                 }`}
               >
                 {btn.label}

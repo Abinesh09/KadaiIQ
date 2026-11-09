@@ -257,21 +257,26 @@ export const SalesPage: React.FC = () => {
         </Card>
       </div>
 
-      {/* Navigation Tabs (Single-Selection Segmented Control) */}
-      <div className="bg-[#F5F7FA] p-1.5 rounded-xl border border-[#E5EAF0] inline-flex items-center gap-1">
+      {/* Navigation Tabs (Single-Selection Soft Lavender & Deep Purple) */}
+      <div className="bg-[#F5F7FA] p-1.5 rounded-xl border border-[#E5EAF0] inline-flex items-center gap-1.5">
         <button
           type="button"
           onClick={() => handleTabChange('bills')}
           className={cn(
             'flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap',
             activeTab === 'bills'
-              ? 'bg-white text-[#172B4D] shadow-xs border border-[#E5EAF0]'
-              : 'text-[#64748B] hover:text-[#172033] hover:bg-white/60 border border-transparent'
+              ? 'bg-[#EDE9FE] text-[#5B45B5] shadow-xs border border-[#8B5CF6]/30'
+              : 'text-[#64748B] hover:text-[#5B45B5] hover:bg-[#F5F3FF] border border-transparent'
           )}
         >
-          <Receipt className={cn('w-3.5 h-3.5', activeTab === 'bills' ? 'text-[#16A36A]' : 'text-[#64748B]')} />
+          <Receipt className={cn('w-3.5 h-3.5', activeTab === 'bills' ? 'text-[#8B5CF6]' : 'text-[#64748B]')} />
           <span>Sales & Bills Ledger</span>
-          <span className="ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F5F7FA] text-[#64748B]">
+          <span
+            className={cn(
+              'ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors',
+              activeTab === 'bills' ? 'bg-[#DBEAFE] text-[#3156A3]' : 'bg-[#F5F7FA] text-[#64748B]'
+            )}
+          >
             {totalBillsCount}
           </span>
         </button>
@@ -281,13 +286,18 @@ export const SalesPage: React.FC = () => {
           className={cn(
             'flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap',
             activeTab === 'imports'
-              ? 'bg-white text-[#172B4D] shadow-xs border border-[#E5EAF0]'
-              : 'text-[#64748B] hover:text-[#172033] hover:bg-white/60 border border-transparent'
+              ? 'bg-[#EDE9FE] text-[#5B45B5] shadow-xs border border-[#8B5CF6]/30'
+              : 'text-[#64748B] hover:text-[#5B45B5] hover:bg-[#F5F3FF] border border-transparent'
           )}
         >
-          <UploadCloud className={cn('w-3.5 h-3.5', activeTab === 'imports' ? 'text-[#16A36A]' : 'text-[#64748B]')} />
+          <UploadCloud className={cn('w-3.5 h-3.5', activeTab === 'imports' ? 'text-[#8B5CF6]' : 'text-[#64748B]')} />
           <span>Import Ledger & Logs</span>
-          <span className="ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F5F7FA] text-[#64748B]">
+          <span
+            className={cn(
+              'ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors',
+              activeTab === 'imports' ? 'bg-[#DBEAFE] text-[#3156A3]' : 'bg-[#F5F7FA] text-[#64748B]'
+            )}
+          >
             {history.length}
           </span>
         </button>

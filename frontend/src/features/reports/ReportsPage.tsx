@@ -167,17 +167,21 @@ export const ReportsPage: React.FC = () => {
           className={cn(
             'p-5 rounded-xl border text-left transition-all cursor-pointer',
             reportType === 'sales'
-              ? 'border-[#16A36A] bg-emerald-50/40 shadow-xs ring-1 ring-[#16A36A]/20'
-              : 'border-[#E5EAF0] bg-white hover:border-slate-300'
+              ? 'border-[#8B5CF6]/50 bg-[#EDE9FE]/50 shadow-xs ring-1 ring-[#8B5CF6]/20'
+              : 'border-[#E5EAF0] bg-white hover:border-[#8B5CF6]/30 hover:bg-[#F5F3FF]/40'
           )}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">Invoices & Sales</span>
-            <div className={cn('p-2 rounded-lg', reportType === 'sales' ? 'bg-[#16A36A] text-white' : 'bg-[#F5F7FA] text-[#64748B]')}>
+            <span className={cn('text-xs font-semibold uppercase tracking-wider', reportType === 'sales' ? 'text-[#5B45B5]' : 'text-[#64748B]')}>
+              Invoices & Sales
+            </span>
+            <div className={cn('p-2 rounded-lg', reportType === 'sales' ? 'bg-[#EDE9FE] text-[#5B45B5]' : 'bg-[#F5F7FA] text-[#64748B]')}>
               <Receipt className="w-5 h-5" />
             </div>
           </div>
-          <h3 className="text-base font-bold text-[#172033] mt-2">Sales Ledger Report</h3>
+          <h3 className={cn('text-base font-bold mt-2', reportType === 'sales' ? 'text-[#5B45B5]' : 'text-[#172033]')}>
+            Sales Ledger Report
+          </h3>
           <p className="text-xs text-[#64748B] mt-1">
             Bill numbers, payment tenders, discounts, GST tax, and grand totals.
           </p>
@@ -189,17 +193,21 @@ export const ReportsPage: React.FC = () => {
           className={cn(
             'p-5 rounded-xl border text-left transition-all cursor-pointer',
             reportType === 'inventory'
-              ? 'border-[#172B4D] bg-slate-50 shadow-xs ring-1 ring-[#172B4D]/20'
-              : 'border-[#E5EAF0] bg-white hover:border-slate-300'
+              ? 'border-[#8B5CF6]/50 bg-[#EDE9FE]/50 shadow-xs ring-1 ring-[#8B5CF6]/20'
+              : 'border-[#E5EAF0] bg-white hover:border-[#8B5CF6]/30 hover:bg-[#F5F3FF]/40'
           )}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">Stock & Valuation</span>
-            <div className={cn('p-2 rounded-lg', reportType === 'inventory' ? 'bg-[#172B4D] text-white' : 'bg-[#F5F7FA] text-[#64748B]')}>
+            <span className={cn('text-xs font-semibold uppercase tracking-wider', reportType === 'inventory' ? 'text-[#5B45B5]' : 'text-[#64748B]')}>
+              Stock & Valuation
+            </span>
+            <div className={cn('p-2 rounded-lg', reportType === 'inventory' ? 'bg-[#EDE9FE] text-[#5B45B5]' : 'bg-[#F5F7FA] text-[#64748B]')}>
               <Boxes className="w-5 h-5" />
             </div>
           </div>
-          <h3 className="text-base font-bold text-[#172033] mt-2">Footwear Valuation Report</h3>
+          <h3 className={cn('text-base font-bold mt-2', reportType === 'inventory' ? 'text-[#5B45B5]' : 'text-[#172033]')}>
+            Footwear Valuation Report
+          </h3>
           <p className="text-xs text-[#64748B] mt-1">
             Current stock quantities, purchase cost, selling price, and stock valuation.
           </p>
@@ -211,17 +219,21 @@ export const ReportsPage: React.FC = () => {
           className={cn(
             'p-5 rounded-xl border text-left transition-all cursor-pointer',
             reportType === 'movements'
-              ? 'border-indigo-600 bg-indigo-50/40 shadow-xs ring-1 ring-indigo-600/20'
-              : 'border-[#E5EAF0] bg-white hover:border-slate-300'
+              ? 'border-[#8B5CF6]/50 bg-[#EDE9FE]/50 shadow-xs ring-1 ring-[#8B5CF6]/20'
+              : 'border-[#E5EAF0] bg-white hover:border-[#8B5CF6]/30 hover:bg-[#F5F3FF]/40'
           )}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">Audit Trail</span>
-            <div className={cn('p-2 rounded-lg', reportType === 'movements' ? 'bg-indigo-600 text-white' : 'bg-[#F5F7FA] text-[#64748B]')}>
+            <span className={cn('text-xs font-semibold uppercase tracking-wider', reportType === 'movements' ? 'text-[#5B45B5]' : 'text-[#64748B]')}>
+              Audit Trail
+            </span>
+            <div className={cn('p-2 rounded-lg', reportType === 'movements' ? 'bg-[#EDE9FE] text-[#5B45B5]' : 'bg-[#F5F7FA] text-[#64748B]')}>
               <ArrowRightLeft className="w-5 h-5" />
             </div>
           </div>
-          <h3 className="text-base font-bold text-[#172033] mt-2">Stock Movement Audit</h3>
+          <h3 className={cn('text-base font-bold mt-2', reportType === 'movements' ? 'text-[#5B45B5]' : 'text-[#172033]')}>
+            Stock Movement Audit
+          </h3>
           <p className="text-xs text-[#64748B] mt-1">
             Full audit log of adjustments, POS sales deductions, and restocks.
           </p>

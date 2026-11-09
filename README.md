@@ -8,186 +8,241 @@
 
 **GitHub Repository:** [https://github.com/Abinesh09/KadaiIQ](https://github.com/Abinesh09/KadaiIQ)
 
-KadaiIQ is an enterprise-grade, multi-tenant Retail Management and Advanced Sales Analytics SaaS platform designed specifically for retail organizations (with specialized intelligence for footwear, apparel, and consumer goods).
+---
+
+## 1. Why KadaiIQ is Useful (The Business Value)
+
+Retail businesses (footwear stores, apparel shops, fashion boutiques, and multi-branch retail chains) face major operational challenges:
+
+1. **Fragmented POS Systems:** Sales files are scattered across legacy offline billing counters (e.g. ZenBiller, CSVs, Excel sheets). Business owners cannot see daily, monthly, or yearly progress in one central place.
+2. **Stock Chaos by Size & Colour:** Selling footwear is complex. A shop may have 50 pairs of shoes, but if sizes 7 and 8 are sold out, customers walk away. Most generic ERPs do not track variant-level size curves or colour distributions.
+3. **Mystery Margins & Profit Blindspots:** High sales volume doesn't guarantee high profit. When discounts, GST, and customer returns are mixed together, owners don't know their true Cost of Goods Sold (COGS) or net take-home margins.
+4. **Dead Capital in Zero-Sales Inventory:** Money gets locked in slow-moving or zero-sales stock without early warning signals.
+5. **Tax Filing Headaches:** Reconciling CGST, SGST, IGST, and HSN-wise sales for Indian GSTR-1 and GSTR-3B monthly filings takes hours of manual accountant work.
+
+### How KadaiIQ Solves This
+
+- **Zero-Manual Data Entry:** Drag-and-drop POS sales files directly into KadaiIQ. The system automatically reconciles transactions, checks deduplication hashes, and adjusts stock quantities in seconds.
+- **Variant-Level Matrix:** Tracks footwear by size (e.g. 6, 7, 8, 9, 10, 11) and colour curves so you always stock the sizes that actually sell.
+- **Accounting-Grade Financial Visibility:** Distinct tracking of Gross Sales, Discounts, Customer Returns, Taxes, Net Sales, COGS, and Gross Profit Margins with exact decimal arithmetic (`shopspring/decimal`).
+- **Dead-Stock Watchdog:** Proactively highlights zero-sales and slow-moving inventory so store managers can discount or liquidate stale stock before it depreciates.
+- **One-Click Indian GST Summaries:** Generates ready-to-file GSTR-1 (Table 7 & Table 12 HSN) and GSTR-3B Table 3.1 summaries.
+- **Enterprise Multi-Tenancy:** A retail owner or franchise group can run multiple shops or brands under one account with strict tenant data isolation.
 
 ---
 
-## 1. System Architecture
+## 2. What You Have (Complete Inventory of Implemented Features)
 
-KadaiIQ adheres to clean architecture principles with complete separation between the Go backend service and React frontend client:
+KadaiIQ is a fully functional, enterprise-grade full-stack platform. Here is everything built into the codebase:
 
-```text
-KadaiIQ/
-├── AGENTS.md                  # Development guidelines & architectural constraints
-├── README.md                  # System documentation & runbook
-├── docker-compose.yml         # Container orchestration (Web: 7070, API: 8080, DB: 5432)
-├── .env.example               # Environment variables specification
-├── .dockerignore              # Container build exclusions
-│
-├── backend/                   # Go + Fiber + GORM + PostgreSQL (MVC Architecture)
-│   ├── cmd/api/main.go        # Server entrypoint with graceful shutdown
-│   ├── config/                # Environment configuration loader
-│   ├── database/              # Connection pooling & health probes
-│   ├── migrations/            # Versioned migrations runner (000001 - 000005)
-│   ├── internal/
-│   │   ├── controllers/       # HTTP request/response handlers
-│   │   ├── services/          # Pure business logic & financial calculations
-│   │   ├── repositories/      # Database queries with strict tenant isolation
-│   │   ├── models/            # GORM database entities & relationships
-│   │   ├── dto/               # Strongly-typed request/response payloads
-│   │   ├── routes/            # Route registration, CORS, security headers
-│   │   ├── middleware/        # JWT auth, tenant context, RBAC authorization
-│   │   └── utils/             # JWT, cryptographic password hashing
-│   ├── tests/                 # Comprehensive unit & integration test suites
-│   ├── go.mod                 # Go dependencies
-│   └── Dockerfile             # Multi-stage Alpine container (non-root user)
-│
-└── frontend/                  # React + Vite + TypeScript + Tailwind CSS + shadcn/ui
-    ├── src/
-    │   ├── components/ui/     # Reusable shadcn/ui primitives (Button, Card, Badge)
-    │   ├── features/
-    │   │   ├── auth/          # Login, Register, Forgot Password
-    │   │   ├── dashboard/     # Executive real-time KPI overview
-    │   │   ├── tenants/       # Tenant onboarding & settings
-    │   │   ├── users/         # Team member invitations & RBAC roles
-    │   │   ├── products/      # Footwear product catalog & barcode lookup
-    │   │   ├── inventory/     # Stock ledger, adjustments & valuation
-    │   │   ├── sales/         # POS data import (ZenBiller), preview & invoice viewer
-    │   │   ├── analytics/     # Recharts trend curves, margins & footwear curves
-    │   │   ├── gst/           # Indian GST settings, GSTR-1 & GSTR-3B summaries
-    │   │   └── reports/       # Sales, valuation, audit reports & CSV downloads
-    │   ├── services/api.ts    # Centralized API service client
-    │   ├── context/           # Authentication state context
-    │   ├── App.tsx            # QueryClient & React Router setup
-    │   └── main.tsx           # Application root
-    ├── nginx.conf             # Production NGINX server on port 7070 with API reverse-proxy
-    ├── package.json           # Dependencies (TanStack Query, Recharts, Lucide)
-    └── Dockerfile             # Multi-stage Node builder + NGINX runtime
+### 1. Executive Business Overview Dashboard
+- **Hero Net Sales Card:** High-contrast revenue tracking with period-over-period percentage growth.
+- **Financial Summary Ribbon:** 6-column accounting breakdown (Gross Sales, Discounts Applied, Returns Subtracted, Net Realized Sales, Cash/UPI/Card Collections, and True Gross Profit).
+- **Interactive Revenue Trajectory:** Recharts dual-curve area chart comparing Gross Sales vs Net Sales over time.
+- **Quick Horizons:** One-click toggles for `Today`, `Last 7 days`, `Last 30 days`, `This month`, and `This year`.
+- **Secondary Intelligence Grid:** Real-time widgets for Top 5 Best Sellers, Zero-Sales Watchdog, Category Share, Tender Breakdown, and 5 Latest POS Bills.
+
+### 2. Product Catalogue & Footwear Variant Matrix
+- Multi-variant product catalog: Product Name, Code, Brand, Category, HSN Code, Base Price, and Cost Price.
+- Granular variant matrix tracking: Shoe Sizes (e.g., 6, 7, 8, 9, 10, 11), Colours (Black, Tan, Brown, White), SKUs, and Barcodes.
+- Barcode scanning & quick lookup for fast retail POS identification.
+
+### 3. Inventory & Immutable Stock Movement Ledger
+- Stock-on-hand tracking for every product variant.
+- **Immutable Movement Ledger:** Every inventory change creates an auditable `StockMovement` entry:
+  - `OPENING_STOCK` — Initial balance setup
+  - `SALE` — Automated POS sales deduction
+  - `SALES_RETURN` — Stock replenishment from customer returns
+  - `PURCHASE_RESTOCK` — Inward supplier shipments
+  - `MANUAL_ADJUSTMENT` — Physical audit corrections
+  - `TRANSFER` — Inter-branch store transfers
+- Zero inventory changes without an audit trail.
+
+### 4. POS Sales & Import Engine
+- **ZenBiller POS Support:** Drag-and-drop batch upload for ZenBiller CSV and Excel (.xlsx) export files.
+- **Instant File Preview:** Validates row count, gross revenue, items, tax calculations, and error warnings before writing to the database.
+- **Deduplication Shield:** Composite unique constraint (`tenant_id`, `source_system`, `source_bill_id`) prevents duplicate sales imports and stops double inventory deductions.
+- **Import Audit History:** Complete logs showing file names, timestamps, total rows processed, duplicate bills blocked, and execution status.
+
+### 5. Sales Performance & Advanced Revenue Analytics
+- **Sales Trajectory View:** Visual area charts tracking daily and weekly bill volumes and net sales.
+- **Daily Breakdown Ledger:** Day-by-day table showing invoice counts, units moved, gross sales, discounts, returns, taxes, and net revenue.
+- **Monthly Breakdown Table:** Month-over-month performance progression.
+- **Yearly Comparison Table:** Multi-year growth metrics.
+- **Product Performance Intelligence:** Filter products into *Top-Selling*, *Slow-Moving*, and *Zero-Sales Alerts* with margins and remaining stock on hand.
+- **Footwear Size & Colour Curves:** Bar charts showing which shoe sizes generate the highest revenue and donut charts of colour preferences.
+- **Payment Tender Breakdown:** Distribution across Cash, UPI (GPay/PhonePe/Paytm), Credit/Debit Cards, and Net Banking.
+- **Multi-Sheet Excel (.xlsx) Export:** One-click download containing all financial metrics, trends, and product data in clean spreadsheet sheets.
+
+### 6. Indian GST Compliance & Reports
+- Tenant-specific GSTIN configuration (with automated state code resolution).
+- Intra-state (CGST + SGST) vs Inter-state (IGST) automated tax split.
+- Configurable GST slabs per footwear category (e.g., 5% vs 12% vs 18%).
+- **GSTR-1 Table 7:** B2C taxable turnover and tax breakup.
+- **GSTR-1 Table 12:** HSN-wise summary with quantity, taxable value, and tax rates.
+- **GSTR-3B Table 3.1:** Outward taxable supplies and net tax liability calculation.
+
+### 7. Financial Reports & RFC-4180 CSV Exports
+- **Sales Ledger Report:** Invoices, bill numbers, customer details, payment methods, and tax values.
+- **Footwear Valuation Report:** Current stock quantities, purchase cost, selling price, and total inventory asset value.
+- **Stock Movement Audit Trail:** Complete tamper-evident log of all adjustments and restocks.
+- All reports downloadable as clean RFC-4180 CSV files.
+
+### 8. Multi-Tenant Architecture & RBAC Security
+- Strict multi-tenant isolation at the database repository layer.
+- Tenant context resolved strictly from authenticated user JWTs (`X-Tenant-ID` header).
+- Role-Based Access Control (RBAC):
+  - **Super Admin:** Platform-wide oversight and tenant creation.
+  - **Store Admin:** Full store control, pricing, imports, and user management.
+  - **Store Manager:** Day-to-day operations, inventory, and sales analytics.
+  - **Cashier:** POS sales creation and bill viewing.
+- OWASP security headers (`nosniff`, `DENY`, `mode=block`) and non-root Docker runtime.
+
+---
+
+## 3. Technology Stack
+
+| Layer | Technologies Used |
+|:---|:---|
+| **Backend API** | Go 1.24, Fiber v2, GORM, `pgx`, `shopspring/decimal`, `excelize/v2`, JWT |
+| **Frontend Web** | React 19, TypeScript (Strict Mode), Vite 8, Tailwind CSS v4, shadcn/ui, TanStack Query v5, Recharts, Lucide React |
+| **Database** | PostgreSQL 16 with versioned idempotent migrations (`000001` - `000005`) |
+| **Infrastructure** | Docker, Docker Compose, NGINX reverse proxy with zero-cache headers |
+
+---
+
+## 4. How to Run KadaiIQ
+
+### Method A: Running with Docker Compose (Recommended)
+
+Running via Docker Compose brings up the frontend, backend API, and PostgreSQL database with a single command.
+
+#### Step 1: Clone the repository
+```bash
+git clone https://github.com/Abinesh09/KadaiIQ.git
+cd KadaiIQ
 ```
 
----
+#### Step 2: Start all containers
+```bash
+docker compose up --build -d
+```
 
-## 2. Technology Stack
+#### Step 3: Access the platform in your browser
+- **Frontend Dashboard:** [http://localhost:7070](http://localhost:7070)
+- **Backend API Health:** [http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health)
+- **Database Connection Health:** [http://localhost:8080/api/v1/health/db](http://localhost:8080/api/v1/health/db)
+- **PostgreSQL Database:** `localhost:5432` (database: `kadai_iq`, user: `kadai_user`)
 
-### Backend
-- **Language:** Go 1.24+
-- **HTTP Framework:** Fiber v2
-- **ORM:** GORM with PostgreSQL driver (`pgx`)
-- **Database:** PostgreSQL 16
-- **Arithmetic:** `shopspring/decimal` for exact financial calculations (zero floating-point inaccuracies)
-- **Data Parser:** `xuri/excelize/v2` for Excel (.xlsx) and Go standard `encoding/csv`
-- **Security:** OWASP secure headers, Bcrypt password hashing, JWT access & refresh tokens
+#### Step 4: Login Credentials
+When the database initializes for the first time, a default Super Administrator account is seeded:
+- **Email:** `superadmin@kadaiiq.com`
+- **Password:** `Admin@KadaiIQ2026`
 
-### Frontend
-- **Framework:** React 19 + TypeScript (Strict Mode)
-- **Build Tool:** Vite 8
-- **Styling:** Tailwind CSS v4 + shadcn/ui design language
-- **State Management:** TanStack React Query v5
-- **Charts & Visualizations:** Recharts (Area, Bar, Donut curves)
-- **Icons:** Lucide React
+*(You can also register a brand new retail store account directly on the login screen at [http://localhost:7070/register](http://localhost:7070/register).)*
 
----
-
-## 3. Implemented Roadmap Modules
-
-| Phase | Module | Status | Highlights |
-|:---|:---|:---:|:---|
-| **Phase 1** | **Project Foundation** | ✅ Complete | Go Fiber setup, React Vite setup, Docker compose, health check endpoint. |
-| **Phase 2** | **Database & Multi-Tenant** | ✅ Complete | GORM PostgreSQL pooling, versioned migration engine, tenant isolation boundaries. |
-| **Phase 3** | **Authentication & RBAC** | ✅ Complete | JWT tokens, password reset flow, Super Admin vs Tenant Admin scoping. |
-| **Phase 4** | **Products & Inventory** | ✅ Complete | Footwear variants (sizes, colours, barcodes), immutable stock ledger (`StockMovement`). |
-| **Phase 5** | **POS Sales Data Import** | ✅ Complete | ZenBiller/CSV/Excel parser, composite deduplication index, idempotent stock deduction. |
-| **Phase 6** | **Advanced Analytics** | ✅ Complete | Recharts revenue curves, COGS & margin tracking, footwear size & colour intelligence. |
-| **Phase 7** | **Reports & Indian GST** | ✅ Complete | GSTIN validation, GSTR-1 (Table 7 & 12 HSN), GSTR-3B Table 3.1, downloadable CSV reports. |
-| **Phase 8** | **Security & Deployment** | ✅ Complete | OWASP headers, non-root Docker builds, port 7070 web container, end-to-end tests. |
-
----
-
-## 4. Quick Start & Deployment
-
-### Running with Docker Compose (Recommended)
-
-1. Ensure **Docker Desktop** is running.
-2. Clone and start all services:
-   ```bash
-   git clone https://github.com/Abinesh09/KadaiIQ.git
-   cd KadaiIQ
-   docker compose up --build -d
-   ```
-3. Access KadaiIQ:
-   - **Frontend Web UI:** [http://localhost:7070](http://localhost:7070)
-   - **Backend API:** [http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health)
-   - **Database Health Check:** [http://localhost:8080/api/v1/health/db](http://localhost:8080/api/v1/health/db)
-   - **PostgreSQL Database:** `localhost:5432` (database: `kadai_iq`, user: `kadai_user`)
-
-To stop all services:
+#### To Stop the Application:
 ```bash
 docker compose down
 ```
+*(Do not add the `-v` flag unless you want to wipe your database volume).*
 
 ---
 
-### Running in Local Development Mode
+### Method B: Running in Local Development Mode (Without Docker)
 
 #### Prerequisites
-- Go 1.24+
-- Node.js 20+ and npm
-- PostgreSQL 16 running on `localhost:5432`
+- **Go:** Version 1.24 or higher ([Download](https://golang.org/dl/))
+- **Node.js:** Version 20 or higher & npm ([Download](https://nodejs.org/))
+- **PostgreSQL:** Version 16 running locally on port `5432`
 
-#### 1. Setup Backend
+#### Step 1: Setup the Database
+Create the database in PostgreSQL:
+```sql
+CREATE DATABASE kadai_iq;
+CREATE USER kadai_user WITH PASSWORD 'kadai_password';
+GRANT ALL PRIVILEGES ON DATABASE kadai_iq TO kadai_user;
+```
+
+#### Step 2: Run the Go Backend
 ```bash
 cd backend
-cp .env.example .env   # Configure DB credentials
+cp .env.example .env
+# Verify your DATABASE_URL in .env
 go run cmd/api/main.go
 ```
-The Go API starts on `http://localhost:8080`.
+The Go Fiber server starts on **`http://localhost:8080`**. Migrations run automatically on startup.
 
-#### 2. Setup Frontend
+#### Step 3: Run the React Frontend
+In a new terminal:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-The Vite development server starts on `http://localhost:7070`.
+The Vite development server will start on **`http://localhost:7070`**.
 
 ---
 
-## 5. Security & Multi-Tenant Model
+## 5. Automated Tests & Verification
 
-1. **Mandatory Tenant Scoping:** Every business record (`Product`, `ProductVariant`, `StockMovement`, `Sale`, `SaleItem`, `ImportJob`, `TenantGSTSetting`) has a foreign key to `tenant_id`.
-2. **Context Resolution:** The backend extracts the authenticated tenant from the verified JWT claims and header `X-Tenant-ID`. It is impossible for Tenant A to query or mutate Tenant B's data.
-3. **OWASP HTTP Security Headers:** Enforces `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `X-XSS-Protection: 1; mode=block`, and `Referrer-Policy: strict-origin-when-cross-origin`.
-4. **Non-Root Docker Containers:** Production backend container runs under unprivileged user `kadaiuser` (UID 10001).
-5. **Deduplication Shield:** Composite unique index `idx_tenant_source_bill (tenant_id, source_system, source_bill_id)` prevents POS data re-imports from double counting sales or double deducting stock.
-
----
-
-## 6. Testing & Quality Assurance
-
-### Run Backend Test Suites
+### Run Backend Tests
+KadaiIQ includes 12 automated test suites covering authentication, migrations, inventory deduction idempotency, sales import deduplication, analytics calculations, Indian GST logic, and multi-tenant isolation:
 ```bash
 cd backend
 go test -v ./...
 ```
-Executes 12 test suites verifying:
-- Authentication & tenant onboarding
-- JWT token expiration
-- Migration idempotency
-- Product catalogue & barcode lookup
-- Stock movements & inventory deduction idempotency
-- Sales import parser & deduplication
-- Advanced analytics & margin intelligence
-- Indian GST validation, GSTR-1 & GSTR-3B calculations
-- Report generation & CSV streaming exports
-- OWASP security headers & role-based access control
-- Strict multi-tenant isolation across all modules
 
-### Run Frontend Production Build & Typecheck
+### Run Frontend Production Build & Type-Check
+Verify strict TypeScript compilation with zero errors:
 ```bash
 cd frontend
 npm run build
 ```
-Ensures 100% strict TypeScript compliance with zero warnings or errors.
+
+---
+
+## 6. Project Directory Structure
+
+```text
+KadaiIQ/
+├── AGENTS.md                  # Development rules & architectural constraints
+├── README.md                  # Project documentation & runbook
+├── docker-compose.yml         # Container orchestration (Web: 7070, API: 8080, DB: 5432)
+├── .env.example               # Environment variable templates
+│
+├── backend/                   # Go backend (MVC Architecture)
+│   ├── cmd/api/main.go        # Server entrypoint with graceful shutdown
+│   ├── config/                # Environment variable configuration
+│   ├── database/              # PostgreSQL connection pool & health checks
+│   ├── migrations/            # Versioned migrations (000001 to 000005)
+│   ├── internal/
+│   │   ├── controllers/       # HTTP request handlers
+│   │   ├── services/          # Pure business logic & financial math
+│   │   ├── repositories/      # Database queries with strict tenant isolation
+│   │   ├── models/            # GORM database entities
+│   │   ├── dto/               # Strongly-typed request/response models
+│   │   ├── routes/            # Route registration & CORS setup
+│   │   └── middleware/        # JWT auth, tenant context, RBAC
+│   ├── tests/                 # Unit & integration test suites
+│   └── Dockerfile             # Multi-stage Alpine container (non-root)
+│
+└── frontend/                  # React client (Vite + TypeScript)
+    ├── src/
+    │   ├── components/ui/     # Reusable UI primitives
+    │   ├── features/
+    │   │   ├── dashboard/     # Executive real-time KPI overview
+    │   │   ├── products/      # Footwear product catalog & barcode lookup
+    │   │   ├── inventory/     # Stock ledger & valuation
+    │   │   ├── sales/         # POS data import & ledger
+    │   │   ├── analytics/     # Revenue trajectory curves & size matrix
+    │   │   ├── gst/           # Indian GST settings & GSTR reports
+    │   │   └── reports/       # CSV/Excel export generators
+    │   ├── services/api.ts    # Centralized API service client
+    │   └── App.tsx            # Routes & query provider
+    ├── nginx.conf             # Production NGINX server with reverse proxy
+    └── Dockerfile             # Multi-stage builder + NGINX runtime
+```
 
 ---
 

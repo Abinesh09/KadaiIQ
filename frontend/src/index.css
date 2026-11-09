@@ -13,6 +13,13 @@
   --color-border-subtle: #E5EAF0;
   --color-warning-amber: #D97706;
   --color-danger-red: #DC2626;
+  /* Premium Lavender + Purple + Soft Blue Tab Palette */
+  --color-tab-selected-bg: #EDE9FE;
+  --color-tab-selected-text: #5B45B5;
+  --color-tab-indicator: #8B5CF6;
+  --color-tab-hover-bg: #F5F3FF;
+  --color-accent-blue-bg: #DBEAFE;
+  --color-accent-blue-text: #3156A3;
 }
 
 @layer base {
