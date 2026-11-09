@@ -315,6 +315,16 @@ export interface MonthlyBreakdownItemData {
   net_sales: string | number
 }
 
+export interface YearlyBreakdownItemData {
+  year: number
+  bills: number
+  units_sold: number
+  gross_sales: string | number
+  discounts: string | number
+  returns: string | number
+  net_sales: string | number
+}
+
 export interface DetailedProductPerformanceItemData {
   product_id?: string
   product_name: string
@@ -952,6 +962,20 @@ export const apiService = {
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.message || 'Failed to fetch monthly breakdown')
+    return data
+  },
+
+  async getYearlyBreakdown(params?: { range?: string; from?: string; to?: string }): Promise<ApiResponse<YearlyBreakdownItemData[]>> {
+    const query = new URLSearchParams()
+    if (params?.range) query.set('range', params.range)
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+
+    const res = await fetch(`${BASE_URL}/analytics/yearly?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch yearly breakdown')
     return data
   },
 

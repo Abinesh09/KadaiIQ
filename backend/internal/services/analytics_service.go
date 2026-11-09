@@ -88,6 +88,13 @@ func (s *AnalyticsService) ResolveDateWindow(rangeKey, fromStr, toStr string) (s
 		prevEnd = end.AddDate(-1, 0, 0)
 		resolvedKey = "this_year"
 
+	case "last_year":
+		start = time.Date(now.Year()-1, 1, 1, 0, 0, 0, 0, time.UTC)
+		end = time.Date(now.Year()-1, 12, 31, 23, 59, 59, 999999999, time.UTC)
+		prevStart = time.Date(now.Year()-2, 1, 1, 0, 0, 0, 0, time.UTC)
+		prevEnd = time.Date(now.Year()-2, 12, 31, 23, 59, 59, 999999999, time.UTC)
+		resolvedKey = "last_year"
+
 	case "yearly":
 		// Past 5 years
 		start = time.Date(now.Year()-4, 1, 1, 0, 0, 0, 0, time.UTC)
@@ -106,6 +113,33 @@ func (s *AnalyticsService) ResolveDateWindow(rangeKey, fromStr, toStr string) (s
 			prevEnd = start.Add(-time.Nanosecond)
 			prevStart = prevEnd.Add(-duration)
 			resolvedKey = "custom"
+			return
+		}
+		// Single individual day e.g. "2026-11-09"
+		if err1 == nil && toStr == "" {
+			start = time.Date(tStart.Year(), tStart.Month(), tStart.Day(), 0, 0, 0, 0, time.UTC)
+			end = time.Date(tStart.Year(), tStart.Month(), tStart.Day(), 23, 59, 59, 999999999, time.UTC)
+			prevStart = start.AddDate(0, 0, -1)
+			prevEnd = end.AddDate(0, 0, -1)
+			resolvedKey = "day"
+			return
+		}
+		// Selected month e.g. "2026-10"
+		if tMonth, errM := time.Parse("2006-01", fromStr); errM == nil {
+			start = time.Date(tMonth.Year(), tMonth.Month(), 1, 0, 0, 0, 0, time.UTC)
+			end = start.AddDate(0, 1, 0).Add(-time.Nanosecond)
+			prevStart = start.AddDate(0, -1, 0)
+			prevEnd = start.Add(-time.Nanosecond)
+			resolvedKey = "month"
+			return
+		}
+		// Selected year e.g. "2026"
+		if tYear, errY := time.Parse("2006", fromStr); errY == nil {
+			start = time.Date(tYear.Year(), 1, 1, 0, 0, 0, 0, time.UTC)
+			end = time.Date(tYear.Year(), 12, 31, 23, 59, 59, 999999999, time.UTC)
+			prevStart = time.Date(tYear.Year()-1, 1, 1, 0, 0, 0, 0, time.UTC)
+			prevEnd = time.Date(tYear.Year()-1, 12, 31, 23, 59, 59, 999999999, time.UTC)
+			resolvedKey = "year"
 			return
 		}
 		fallthrough
@@ -429,6 +463,52 @@ func (s *AnalyticsService) GetMonthlyBreakdown(tenantID uuid.UUID, rangeKey, fro
 	return results, nil
 }
 
+// GetYearlyBreakdown groups sales by year
+func (s *AnalyticsService) GetYearlyBreakdown(tenantID uuid.UUID, rangeKey, fromStr, toStr string) ([]dto.YearlyBreakdownItem, error) {
+	start, end, _, _, _ := s.ResolveDateWindow(rangeKey, fromStr, toStr)
+	dailyRows, err := s.repo.GetDetailedDailyBreakdown(tenantID, start, end)
+	if err != nil {
+		return nil, err
+	}
+
+	grouped := make(map[int]*dto.YearlyBreakdownItem)
+	for _, d := range dailyRows {
+		t, err := time.Parse("2006-01-02", d.Date)
+		if err != nil {
+			continue
+		}
+		year := t.Year()
+		item, ok := grouped[year]
+		if !ok {
+			item = &dto.YearlyBreakdownItem{Year: year}
+			grouped[year] = item
+		}
+		item.Bills += d.Bills
+		item.UnitsSold += d.UnitsSold
+		item.GrossSales = item.GrossSales.Add(d.GrossSales)
+		item.Discounts = item.Discounts.Add(d.Discounts)
+		item.Returns = item.Returns.Add(d.Returns)
+		item.NetSales = item.NetSales.Add(d.NetSales)
+	}
+
+	var years []int
+	for y := range grouped {
+		years = append(years, y)
+	}
+	sort.Ints(years)
+
+	results := make([]dto.YearlyBreakdownItem, len(years))
+	for i, y := range years {
+		item := grouped[y]
+		item.GrossSales = item.GrossSales.Round(2)
+		item.Discounts = item.Discounts.Round(2)
+		item.Returns = item.Returns.Round(2)
+		item.NetSales = item.NetSales.Round(2)
+		results[i] = *item
+	}
+	return results, nil
+}
+
 // GetDetailedProductPerformance returns product intelligence categorized by sales performance
 func (s *AnalyticsService) GetDetailedProductPerformance(tenantID uuid.UUID, rangeKey, fromStr, toStr string) (*dto.ProductPerformanceResponse, error) {
 	start, end, _, _, _ := s.ResolveDateWindow(rangeKey, fromStr, toStr)
@@ -668,7 +748,9 @@ func (s *AnalyticsService) ExportComprehensiveExcel(tenantID uuid.UUID, rangeKey
 
 	dailyBreakdown, _ := s.GetDetailedDailyBreakdown(tenantID, rangeKey, fromStr, toStr)
 	monthlyBreakdown, _ := s.GetMonthlyBreakdown(tenantID, rangeKey, fromStr, toStr)
+	yearlyBreakdown, _ := s.GetYearlyBreakdown(tenantID, rangeKey, fromStr, toStr)
 	productPerf, _ := s.GetDetailedProductPerformance(tenantID, rangeKey, fromStr, toStr)
+	categorySales, _ := s.GetCategorySales(tenantID, rangeKey, fromStr, toStr)
 	footwearIntel, _ := s.GetFootwearIntelligence(tenantID, rangeKey, fromStr, toStr)
 	paymentMethods, _ := s.GetPaymentMethods(tenantID, rangeKey, fromStr, toStr)
 	rawTransactions, _ := s.repo.GetRawTransactions(tenantID, summary.StartDate, summary.EndDate)
@@ -820,28 +902,74 @@ func (s *AnalyticsService) ExportComprehensiveExcel(tenantID uuid.UUID, rangeKey
 	f.SetCellStyle("Daily Sales", fmt.Sprintf("A%d", dRow), fmt.Sprintf("H%d", dRow), totalRowStyle)
 	f.SetColWidth("Daily Sales", "A", "H", 18)
 
-	// 3. MONTHLY BREAKDOWN SHEET
+	// 3. MONTHLY SALES SHEET (Both names for strict backwards compatibility)
+	f.NewSheet("Monthly Sales")
 	f.NewSheet("Monthly Breakdown")
 	mHeaders := []string{"Year", "Month", "Bills", "Units Sold", "Gross Sales (₹)", "Discounts (₹)", "Returns (₹)", "Net Sales (₹)"}
 	for c, h := range mHeaders {
 		cell, _ := excelize.CoordinatesToCellName(c+1, 1)
+		f.SetCellValue("Monthly Sales", cell, h)
 		f.SetCellValue("Monthly Breakdown", cell, h)
 	}
+	f.SetCellStyle("Monthly Sales", "A1", "H1", headerStyle)
 	f.SetCellStyle("Monthly Breakdown", "A1", "H1", headerStyle)
 
 	mRow := 2
 	for _, m := range monthlyBreakdown {
-		f.SetCellValue("Monthly Breakdown", fmt.Sprintf("A%d", mRow), m.Year)
-		f.SetCellValue("Monthly Breakdown", fmt.Sprintf("B%d", mRow), m.MonthName)
-		f.SetCellValue("Monthly Breakdown", fmt.Sprintf("C%d", mRow), m.Bills)
-		f.SetCellValue("Monthly Breakdown", fmt.Sprintf("D%d", mRow), m.UnitsSold)
-		f.SetCellValue("Monthly Breakdown", fmt.Sprintf("E%d", mRow), m.GrossSales.InexactFloat64())
-		f.SetCellValue("Monthly Breakdown", fmt.Sprintf("F%d", mRow), m.Discounts.InexactFloat64())
-		f.SetCellValue("Monthly Breakdown", fmt.Sprintf("G%d", mRow), m.Returns.InexactFloat64())
-		f.SetCellValue("Monthly Breakdown", fmt.Sprintf("H%d", mRow), m.NetSales.InexactFloat64())
+		for _, sName := range []string{"Monthly Sales", "Monthly Breakdown"} {
+			f.SetCellValue(sName, fmt.Sprintf("A%d", mRow), m.Year)
+			f.SetCellValue(sName, fmt.Sprintf("B%d", mRow), m.MonthName)
+			f.SetCellValue(sName, fmt.Sprintf("C%d", mRow), m.Bills)
+			f.SetCellValue(sName, fmt.Sprintf("D%d", mRow), m.UnitsSold)
+			f.SetCellValue(sName, fmt.Sprintf("E%d", mRow), m.GrossSales.InexactFloat64())
+			f.SetCellValue(sName, fmt.Sprintf("F%d", mRow), m.Discounts.InexactFloat64())
+			f.SetCellValue(sName, fmt.Sprintf("G%d", mRow), m.Returns.InexactFloat64())
+			f.SetCellValue(sName, fmt.Sprintf("H%d", mRow), m.NetSales.InexactFloat64())
+		}
 		mRow++
 	}
+	f.SetColWidth("Monthly Sales", "A", "H", 16)
 	f.SetColWidth("Monthly Breakdown", "A", "H", 16)
+
+	// 4. YEARLY SUMMARY SHEET
+	f.NewSheet("Yearly Summary")
+	yHeaders := []string{"Year", "Bills / Invoices", "Units Sold", "Gross Sales (₹)", "Discounts (₹)", "Returns (₹)", "Net Sales (₹)"}
+	for c, h := range yHeaders {
+		cell, _ := excelize.CoordinatesToCellName(c+1, 1)
+		f.SetCellValue("Yearly Summary", cell, h)
+	}
+	f.SetCellStyle("Yearly Summary", "A1", "G1", headerStyle)
+
+	yRow := 2
+	var yTotBills, yTotUnits int64
+	yTotGross, yTotDisc, yTotRet, yTotNet := decimal.Zero, decimal.Zero, decimal.Zero, decimal.Zero
+	for _, y := range yearlyBreakdown {
+		f.SetCellValue("Yearly Summary", fmt.Sprintf("A%d", yRow), y.Year)
+		f.SetCellValue("Yearly Summary", fmt.Sprintf("B%d", yRow), y.Bills)
+		f.SetCellValue("Yearly Summary", fmt.Sprintf("C%d", yRow), y.UnitsSold)
+		f.SetCellValue("Yearly Summary", fmt.Sprintf("D%d", yRow), y.GrossSales.InexactFloat64())
+		f.SetCellValue("Yearly Summary", fmt.Sprintf("E%d", yRow), y.Discounts.InexactFloat64())
+		f.SetCellValue("Yearly Summary", fmt.Sprintf("F%d", yRow), y.Returns.InexactFloat64())
+		f.SetCellValue("Yearly Summary", fmt.Sprintf("G%d", yRow), y.NetSales.InexactFloat64())
+
+		yTotBills += y.Bills
+		yTotUnits += y.UnitsSold
+		yTotGross = yTotGross.Add(y.GrossSales)
+		yTotDisc = yTotDisc.Add(y.Discounts)
+		yTotRet = yTotRet.Add(y.Returns)
+		yTotNet = yTotNet.Add(y.NetSales)
+		yRow++
+	}
+	// Total row for yearly summary
+	f.SetCellValue("Yearly Summary", fmt.Sprintf("A%d", yRow), "TOTAL")
+	f.SetCellValue("Yearly Summary", fmt.Sprintf("B%d", yRow), yTotBills)
+	f.SetCellValue("Yearly Summary", fmt.Sprintf("C%d", yRow), yTotUnits)
+	f.SetCellValue("Yearly Summary", fmt.Sprintf("D%d", yRow), yTotGross.InexactFloat64())
+	f.SetCellValue("Yearly Summary", fmt.Sprintf("E%d", yRow), yTotDisc.InexactFloat64())
+	f.SetCellValue("Yearly Summary", fmt.Sprintf("F%d", yRow), yTotRet.InexactFloat64())
+	f.SetCellValue("Yearly Summary", fmt.Sprintf("G%d", yRow), yTotNet.InexactFloat64())
+	f.SetCellStyle("Yearly Summary", fmt.Sprintf("A%d", yRow), fmt.Sprintf("G%d", yRow), totalRowStyle)
+	f.SetColWidth("Yearly Summary", "A", "G", 18)
 
 	// 4. PRODUCT SALES SHEET
 	f.NewSheet("Product Sales")
@@ -877,7 +1005,43 @@ func (s *AnalyticsService) ExportComprehensiveExcel(tenantID uuid.UUID, rangeKey
 	f.SetColWidth("Product Sales", "A", "P", 16)
 	f.SetColWidth("Product Sales", "B", "B", 26)
 
-	// 5. ZERO SALES ALERT SHEET
+	// 5. CATEGORY & BRAND SALES SHEET
+	f.NewSheet("Category & Brand Sales")
+	f.SetCellValue("Category & Brand Sales", "A1", "Product Category Breakdown")
+	f.SetCellValue("Category & Brand Sales", "B1", "Units Sold")
+	f.SetCellValue("Category & Brand Sales", "C1", "Revenue (₹)")
+	f.SetCellValue("Category & Brand Sales", "D1", "Revenue Share %")
+	f.SetCellStyle("Category & Brand Sales", "A1", "D1", headerStyle)
+
+	cbRow := 2
+	for _, cat := range categorySales {
+		f.SetCellValue("Category & Brand Sales", fmt.Sprintf("A%d", cbRow), cat.CategoryName)
+		f.SetCellValue("Category & Brand Sales", fmt.Sprintf("B%d", cbRow), cat.UnitsSold)
+		f.SetCellValue("Category & Brand Sales", fmt.Sprintf("C%d", cbRow), cat.Revenue.InexactFloat64())
+		f.SetCellValue("Category & Brand Sales", fmt.Sprintf("D%d", cbRow), cat.Percentage.InexactFloat64())
+		cbRow++
+	}
+
+	cbRow += 2
+	f.SetCellValue("Category & Brand Sales", fmt.Sprintf("A%d", cbRow), "Brand Performance Breakdown")
+	f.SetCellValue("Category & Brand Sales", fmt.Sprintf("B%d", cbRow), "Units Sold")
+	f.SetCellValue("Category & Brand Sales", fmt.Sprintf("C%d", cbRow), "Revenue (₹)")
+	f.SetCellValue("Category & Brand Sales", fmt.Sprintf("D%d", cbRow), "Revenue Share %")
+	f.SetCellStyle("Category & Brand Sales", fmt.Sprintf("A%d", cbRow), fmt.Sprintf("D%d", cbRow), headerStyle)
+	cbRow++
+
+	if footwearIntel != nil {
+		for _, br := range footwearIntel.TopBrands {
+			f.SetCellValue("Category & Brand Sales", fmt.Sprintf("A%d", cbRow), br.AttributeVal)
+			f.SetCellValue("Category & Brand Sales", fmt.Sprintf("B%d", cbRow), br.UnitsSold)
+			f.SetCellValue("Category & Brand Sales", fmt.Sprintf("C%d", cbRow), br.Revenue.InexactFloat64())
+			f.SetCellValue("Category & Brand Sales", fmt.Sprintf("D%d", cbRow), br.Percentage.InexactFloat64())
+			cbRow++
+		}
+	}
+	f.SetColWidth("Category & Brand Sales", "A", "D", 22)
+
+	// 6. ZERO SALES ALERT SHEET
 	f.NewSheet("Zero Sales Alert")
 	zHeaders := []string{"Product Code", "Product Name", "Brand", "Category", "Size", "Colour", "Barcode", "Current Stock (Units)", "Capital Locked"}
 	for c, h := range zHeaders {

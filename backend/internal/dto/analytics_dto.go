@@ -136,6 +136,16 @@ type MonthlyBreakdownItem struct {
 	NetSales   decimal.Decimal `json:"net_sales"`
 }
 
+type YearlyBreakdownItem struct {
+	Year       int             `json:"year"`
+	Bills      int64           `json:"bills"`
+	UnitsSold  int64           `json:"units_sold"`
+	GrossSales decimal.Decimal `json:"gross_sales"`
+	Discounts  decimal.Decimal `json:"discounts"`
+	Returns    decimal.Decimal `json:"returns"`
+	NetSales   decimal.Decimal `json:"net_sales"`
+}
+
 type DetailedProductPerformanceItem struct {
 	ProductID    *uuid.UUID      `json:"product_id,omitempty"`
 	ProductName  string          `json:"product_name"`

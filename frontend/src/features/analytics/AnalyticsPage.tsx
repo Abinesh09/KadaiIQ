@@ -10,6 +10,7 @@ import {
   type DetailedProductPerformanceItemData,
   type DailyBreakdownItemData,
   type MonthlyBreakdownItemData,
+  type YearlyBreakdownItemData,
 } from '@/services/api'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -55,7 +56,7 @@ export const AnalyticsPage: React.FC = () => {
   const [dateFrom, setDateFrom] = useState<string>('')
   const [dateTo, setDateTo] = useState<string>('')
   const [isExporting, setIsExporting] = useState<boolean>(false)
-  const [activeTab, setActiveTab] = useState<'trends' | 'daily' | 'monthly' | 'products' | 'footwear' | 'payments'>('trends')
+  const [activeTab, setActiveTab] = useState<'trends' | 'daily' | 'monthly' | 'yearly' | 'products' | 'footwear' | 'payments'>('trends')
   const [productSubTab, setProductSubTab] = useState<'top' | 'slow' | 'zero'>('top')
   const [productSearch, setProductSearch] = useState<string>('')
 
@@ -95,6 +96,13 @@ export const AnalyticsPage: React.FC = () => {
     enabled: activeTab === 'monthly',
   })
 
+  // 4b. Yearly Breakdown (for yearly view table)
+  const { data: yearlyResp, isLoading: isLoadingYearly, refetch: refetchYearly } = useQuery({
+    queryKey: ['sales-yearly-breakdown', queryParams],
+    queryFn: () => apiService.getYearlyBreakdown(queryParams),
+    enabled: activeTab === 'yearly',
+  })
+
   // 5. Detailed Product Performance & Zero-Sales Alerts
   const { data: productPerfResp, isLoading: isLoadingProdPerf, refetch: refetchProdPerf } = useQuery({
     queryKey: ['product-detailed-perf', queryParams],
@@ -119,6 +127,7 @@ export const AnalyticsPage: React.FC = () => {
     refetchTrends()
     refetchDaily()
     refetchMonthly()
+    refetchYearly()
     refetchProdPerf()
     refetchPayments()
     refetchFootwear()
@@ -147,6 +156,7 @@ export const AnalyticsPage: React.FC = () => {
   const trends: TrendPointData[] = trendsResp?.data || []
   const dailyBreakdown: DailyBreakdownItemData[] = dailyResp?.data || []
   const monthlyBreakdown: MonthlyBreakdownItemData[] = monthlyResp?.data || []
+  const yearlyBreakdown: YearlyBreakdownItemData[] = yearlyResp?.data || []
   const productPerf: ProductPerformanceResponseData | undefined = productPerfResp?.data
   const payments: PaymentMethodData[] = paymentsResp?.data || []
   const footwear: FootwearIntelligenceData | undefined = footwearResp?.data
@@ -442,6 +452,7 @@ export const AnalyticsPage: React.FC = () => {
           { id: 'trends', label: 'Sales Trends', icon: TrendingUp },
           { id: 'daily', label: 'Daily Breakdown', icon: CalendarDays },
           { id: 'monthly', label: 'Monthly Breakdown', icon: Calendar },
+          { id: 'yearly', label: 'Yearly Summary', icon: Calendar },
           { id: 'products', label: 'Product Intelligence', icon: ShoppingBag },
           { id: 'footwear', label: 'Footwear Matrix', icon: Layers },
           { id: 'payments', label: 'Payment Tenders', icon: CreditCard },
@@ -608,6 +619,54 @@ export const AnalyticsPage: React.FC = () => {
                         <td className="py-2.5 px-3 text-right text-amber-600">₹{Number(m.returns).toFixed(2)}</td>
                         <td className="py-2.5 px-3 text-right font-bold text-emerald-600">
                           ₹{Number(m.net_sales).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* TAB 3b: Yearly Summary Table */}
+      {activeTab === 'yearly' && (
+        <Card className="border-slate-200">
+          <CardHeader>
+            <CardTitle className="text-base">Yearly Sales Progression</CardTitle>
+            <CardDescription>Multi-year revenue, bill volumes, and net performance</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoadingYearly ? (
+              <div className="py-12 text-center text-sm text-slate-400">Loading yearly summary...</div>
+            ) : yearlyBreakdown.length === 0 ? (
+              <div className="py-12 text-center text-sm text-slate-400">No yearly records found.</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-slate-50 text-slate-600 uppercase font-semibold border-b">
+                    <tr>
+                      <th className="py-3 px-3">Calendar Year</th>
+                      <th className="py-3 px-3 text-right">Invoices</th>
+                      <th className="py-3 px-3 text-right">Units Sold</th>
+                      <th className="py-3 px-3 text-right">Gross Sales</th>
+                      <th className="py-3 px-3 text-right">Discounts</th>
+                      <th className="py-3 px-3 text-right">Returns</th>
+                      <th className="py-3 px-3 text-right">Net Sales</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-mono">
+                    {yearlyBreakdown.map((y) => (
+                      <tr key={y.year} className="hover:bg-slate-50">
+                        <td className="py-2.5 px-3 font-semibold text-slate-900 font-sans">{y.year}</td>
+                        <td className="py-2.5 px-3 text-right">{y.bills}</td>
+                        <td className="py-2.5 px-3 text-right font-semibold text-indigo-600">{y.units_sold}</td>
+                        <td className="py-2.5 px-3 text-right">₹{Number(y.gross_sales).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                        <td className="py-2.5 px-3 text-right text-rose-500">₹{Number(y.discounts).toFixed(2)}</td>
+                        <td className="py-2.5 px-3 text-right text-amber-600">₹{Number(y.returns).toFixed(2)}</td>
+                        <td className="py-2.5 px-3 text-right font-bold text-emerald-600">
+                          ₹{Number(y.net_sales).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </td>
                       </tr>
                     ))}

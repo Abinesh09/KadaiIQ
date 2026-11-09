@@ -127,6 +127,7 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, dbManager *database.DBManag
 		analyticsRoutes.Get("/performance", analyticsCtrl.GetPerformance)
 		analyticsRoutes.Get("/daily", analyticsCtrl.GetDailyBreakdown)
 		analyticsRoutes.Get("/monthly", analyticsCtrl.GetMonthlyBreakdown)
+		analyticsRoutes.Get("/yearly", analyticsCtrl.GetYearlyBreakdown)
 		analyticsRoutes.Get("/products/detailed", analyticsCtrl.GetDetailedProducts)
 		analyticsRoutes.Get("/export/excel", analyticsCtrl.ExportExcel)
 		analyticsRoutes.Get("/trends", analyticsCtrl.GetTrends)

@@ -284,14 +284,14 @@ func (r *AnalyticsRepository) GetDetailedDailyBreakdown(tenantID uuid.UUID, star
 	err := r.db.Table("sales").
 		Select(`
 			DATE(sales.sale_date) as date,
-			COUNT(CASE WHEN sales.status != 'CANCELLED' AND sales.status != 'RETURNED' THEN sales.id END) as bills,
-			COALESCE(SUM(CASE WHEN sales.status != 'CANCELLED' AND sales.status != 'RETURNED' THEN sales.grand_total ELSE 0 END), 0) as gross_sales,
-			COALESCE(SUM(CASE WHEN sales.status != 'CANCELLED' AND sales.status != 'RETURNED' THEN sales.discount ELSE 0 END), 0) as discounts,
-			COALESCE(SUM(CASE WHEN sales.status = 'RETURNED' THEN sales.grand_total ELSE 0 END), 0) as returns,
-			COALESCE(SUM(CASE WHEN sales.status != 'CANCELLED' AND sales.status != 'RETURNED' THEN sales.tax_amount ELSE 0 END), 0) as tax_amount,
-			COALESCE(SUM(CASE WHEN sales.status != 'CANCELLED' AND sales.status != 'RETURNED' THEN sales.subtotal ELSE 0 END), 0) as net_sales
+			COUNT(CASE WHEN UPPER(sales.status) != 'CANCELLED' AND UPPER(sales.status) != 'RETURNED' THEN sales.id END) as bills,
+			COALESCE(SUM(CASE WHEN UPPER(sales.status) != 'CANCELLED' AND UPPER(sales.status) != 'RETURNED' THEN sales.grand_total ELSE 0 END), 0) as gross_sales,
+			COALESCE(SUM(CASE WHEN UPPER(sales.status) != 'CANCELLED' AND UPPER(sales.status) != 'RETURNED' THEN sales.discount ELSE 0 END), 0) as discounts,
+			COALESCE(SUM(CASE WHEN UPPER(sales.status) = 'RETURNED' THEN sales.grand_total ELSE 0 END), 0) as returns,
+			COALESCE(SUM(CASE WHEN UPPER(sales.status) != 'CANCELLED' AND UPPER(sales.status) != 'RETURNED' THEN sales.tax_amount ELSE 0 END), 0) as tax_amount,
+			COALESCE(SUM(CASE WHEN UPPER(sales.status) != 'CANCELLED' AND UPPER(sales.status) != 'RETURNED' THEN sales.subtotal ELSE 0 END), 0) as net_sales
 		`).
-		Where("sales.tenant_id = ? AND sales.sale_date >= ? AND sales.sale_date <= ? AND sales.status != 'CANCELLED'", tenantID, start, end).
+		Where("sales.tenant_id = ? AND sales.sale_date >= ? AND sales.sale_date <= ? AND UPPER(sales.status) != 'CANCELLED'", tenantID, start, end).
 		Group("DATE(sales.sale_date)").
 		Order("date ASC").
 		Scan(&rows).Error
@@ -304,10 +304,17 @@ func (r *AnalyticsRepository) GetDetailedDailyBreakdown(tenantID uuid.UUID, star
 		var units int64
 		_ = r.db.Table("sale_items").
 			Joins("JOIN sales ON sale_items.sale_id = sales.id").
-			Where("sale_items.tenant_id = ? AND DATE(sales.sale_date) = ? AND sales.status != 'CANCELLED' AND sales.status != 'RETURNED'", tenantID, rows[i].Date).
+			Where("sale_items.tenant_id = ? AND DATE(sales.sale_date) = ? AND UPPER(sales.status) != 'CANCELLED' AND UPPER(sales.status) != 'RETURNED'", tenantID, rows[i].Date).
 			Select("COALESCE(SUM(sale_items.quantity), 0)").
 			Scan(&units)
 		rows[i].UnitsSold = units
+
+		// Net sales strictly reconciles with Gross - Discounts - Returns
+		calculatedNet := rows[i].GrossSales.Sub(rows[i].Discounts).Sub(rows[i].Returns)
+		if calculatedNet.IsNegative() {
+			calculatedNet = decimal.Zero
+		}
+		rows[i].NetSales = calculatedNet
 	}
 
 	return rows, nil

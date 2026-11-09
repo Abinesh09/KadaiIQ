@@ -181,6 +181,24 @@ func (ctrl *AnalyticsController) GetMonthlyBreakdown(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(dto.SuccessResponse("Monthly breakdown retrieved", monthly))
 }
 
+func (ctrl *AnalyticsController) GetYearlyBreakdown(c *fiber.Ctx) error {
+	tc, err := middleware.GetTenantContext(c)
+	if err != nil {
+		return c.Status(http.StatusUnauthorized).JSON(dto.ErrorResponse("Unauthorized", err.Error()))
+	}
+
+	rangeKey := c.Query("range", "yearly")
+	fromStr := c.Query("from")
+	toStr := c.Query("to")
+
+	yearly, err := ctrl.analyticsService.GetYearlyBreakdown(tc.TenantID, rangeKey, fromStr, toStr)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(dto.ErrorResponse("Failed to fetch yearly breakdown", err.Error()))
+	}
+
+	return c.Status(http.StatusOK).JSON(dto.SuccessResponse("Yearly breakdown retrieved", yearly))
+}
+
 func (ctrl *AnalyticsController) GetDetailedProducts(c *fiber.Ctx) error {
 	tc, err := middleware.GetTenantContext(c)
 	if err != nil {
