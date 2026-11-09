@@ -62,7 +62,7 @@ export const RegisterTenantPage: React.FC = () => {
         <Card className="rounded-2xl border-slate-200/90 shadow-md">
           <CardHeader>
             <CardTitle className="text-base font-bold flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-blue-600" />
+              <Building2 className="w-5 h-5 text-[#7C3AED]" />
               Store & Owner Information
             </CardTitle>
             <CardDescription className="text-xs">All fields are required to setup tenant isolation</CardDescription>
@@ -85,7 +85,7 @@ export const RegisterTenantPage: React.FC = () => {
                     value={form.organization_name}
                     onChange={(e) => handleNameChange(e.target.value)}
                     placeholder="e.g. Royal Footwear"
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all"
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:bg-white transition-all"
                   />
                 </div>
 
@@ -97,7 +97,7 @@ export const RegisterTenantPage: React.FC = () => {
                     value={form.slug}
                     onChange={(e) => setForm({ ...form, slug: e.target.value })}
                     placeholder="royal-footwear"
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all font-mono"
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:bg-white transition-all font-mono"
                   />
                 </div>
               </div>
@@ -111,7 +111,7 @@ export const RegisterTenantPage: React.FC = () => {
                     value={form.owner_name}
                     onChange={(e) => setForm({ ...form, owner_name: e.target.value })}
                     placeholder="e.g. Rajesh Kumar"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
                   />
                 </div>
 
@@ -122,7 +122,7 @@ export const RegisterTenantPage: React.FC = () => {
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     placeholder="+91 98765 43210"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
                   />
                 </div>
               </div>
@@ -135,7 +135,7 @@ export const RegisterTenantPage: React.FC = () => {
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   placeholder="admin@business.com"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
                 />
               </div>
 
@@ -147,7 +147,7 @@ export const RegisterTenantPage: React.FC = () => {
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   placeholder="Minimum 8 characters"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
                 />
               </div>
             </CardContent>
@@ -160,7 +160,7 @@ export const RegisterTenantPage: React.FC = () => {
 
               <p className="text-xs text-slate-500 text-center">
                 Already registered?{' '}
-                <Link to="/login" className="text-blue-600 font-semibold hover:underline">
+                <Link to="/login" className="text-[#8B5CF6] font-semibold hover:underline">
                   Sign In
                 </Link>
               </p>

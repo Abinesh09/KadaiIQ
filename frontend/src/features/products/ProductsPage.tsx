@@ -138,7 +138,7 @@ export const ProductsPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <Package className="w-6 h-6 text-blue-600" />
+            <Package className="w-6 h-6 text-[#7C3AED]" />
             Product Catalogue & Variants
           </h1>
           <p className="text-sm text-slate-500 mt-1">
@@ -146,17 +146,17 @@ export const ProductsPage: React.FC = () => {
           </p>
         </div>
 
-        <Button onClick={() => setShowAddModal(true)} className="bg-blue-600 hover:bg-blue-700">
+        <Button onClick={() => setShowAddModal(true)} className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shadow-xs">
           <Plus className="w-4 h-4 mr-2" />
           Add Footwear Product
         </Button>
       </div>
 
       {/* Barcode Scanner Bar */}
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+      <Card className="bg-[#F5F3FF] border border-[#EDE9FE] shadow-2xs">
         <CardContent className="p-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-[#EDE9FE] text-[#7C3AED] flex items-center justify-center border border-[#8B5CF6]/20">
               <Scan className="w-5 h-5" />
             </div>
             <div>
@@ -171,16 +171,16 @@ export const ProductsPage: React.FC = () => {
               value={barcodeInput}
               onChange={(e) => setBarcodeInput(e.target.value)}
               placeholder="Scan or enter barcode..."
-              className="px-3 py-1.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 font-mono w-64"
+              className="px-3 py-1.5 border border-[#EDE9FE] rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] font-mono w-64"
             />
-            <Button type="submit" size="sm" variant="outline">
+            <Button type="submit" size="sm" variant="secondary">
               Lookup
             </Button>
           </form>
         </CardContent>
 
         {scannedVariant && (
-          <div className="px-6 pb-4 pt-1 border-t border-blue-200 flex items-center justify-between text-xs text-slate-700">
+          <div className="px-6 pb-4 pt-1 border-t border-[#EDE9FE] flex items-center justify-between text-xs text-slate-700">
             <div>
               <span className="font-semibold text-slate-900">Found Variant: </span>
               Size {scannedVariant.size} ({scannedVariant.colour}) | SKU: <code className="bg-white px-1.5 py-0.5 rounded border">{scannedVariant.sku}</code>
@@ -210,7 +210,7 @@ export const ProductsPage: React.FC = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by product name, code, SKU..."
-            className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="w-full pl-9 pr-4 py-2 border border-[#E5EAF0] rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
           />
         </div>
 
@@ -257,7 +257,7 @@ export const ProductsPage: React.FC = () => {
                         <button className="text-slate-400">
                           {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                         </button>
-                        <div className="w-9 h-9 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">
+                        <div className="w-9 h-9 rounded-lg bg-[#EDE9FE] text-[#5B45B5] flex items-center justify-center font-bold text-xs border border-[#8B5CF6]/20">
                           {p.product_code.slice(0, 3)}
                         </div>
                         <div>
@@ -460,8 +460,8 @@ export const ProductsPage: React.FC = () => {
                         onClick={() => toggleSize(sz)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
                           isSelected
-                            ? 'bg-blue-600 text-white border-blue-600'
-                            : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
+                            ? 'bg-[#EDE9FE] text-[#5B45B5] border-[#8B5CF6] shadow-2xs'
+                            : 'bg-white text-[#64748B] border-[#E5EAF0] hover:bg-[#F5F3FF] hover:text-[#5B45B5]'
                         }`}
                       >
                         {sz}
@@ -520,7 +520,7 @@ export const ProductsPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-3 bg-blue-50 rounded-lg text-xs text-blue-800">
+              <div className="p-3 bg-[#F5F3FF] border border-[#EDE9FE] rounded-lg text-xs text-[#5B45B5]">
                 💡 Submitting will generate <strong>{selectedSizes.length} variants</strong> with individual barcodes, SKUs, and record <strong>{selectedSizes.length * openingStock} total units</strong> into the auditable stock ledger.
               </div>
 
@@ -528,7 +528,7 @@ export const ProductsPage: React.FC = () => {
                 <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={createMutation.isPending} className="bg-blue-600 hover:bg-blue-700">
+                <Button type="submit" disabled={createMutation.isPending} className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white">
                   {createMutation.isPending ? 'Saving Product...' : 'Create Product & Variants'}
                 </Button>
               </div>

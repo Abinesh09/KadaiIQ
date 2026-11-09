@@ -83,7 +83,7 @@ export const SuperAdminPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-[#F5F3FF] text-[#7C3AED] flex items-center justify-center">
               <ShieldCheck className="w-5 h-5" />
             </div>
             Super Admin Console
@@ -95,7 +95,7 @@ export const SuperAdminPage: React.FC = () => {
 
         <Button
           onClick={() => setShowCreateModal(true)}
-          className="bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow-sm cursor-pointer"
+          className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white font-semibold rounded-xl shadow-sm cursor-pointer"
         >
           <Plus className="w-4 h-4 mr-2" />
           Provision New Organisation
@@ -109,7 +109,7 @@ export const SuperAdminPage: React.FC = () => {
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
               Total Organisations
             </span>
-            <Building2 className="w-4 h-4 text-purple-600" />
+            <Building2 className="w-4 h-4 text-[#7C3AED]" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-black text-slate-900 font-numeric">{tenants.length}</div>
@@ -137,7 +137,7 @@ export const SuperAdminPage: React.FC = () => {
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
               Platform Architecture
             </span>
-            <ShieldCheck className="w-4 h-4 text-blue-600" />
+            <ShieldCheck className="w-4 h-4 text-[#7C3AED]" />
           </CardHeader>
           <CardContent>
             <div className="text-sm font-bold text-slate-900 mt-1">Shared Schema Isolation</div>
@@ -181,7 +181,7 @@ export const SuperAdminPage: React.FC = () => {
                     <tr key={t.id} className="hover:bg-slate-50">
                       <td className="px-4 py-3">
                         <div className="font-semibold text-slate-900 flex items-center gap-2">
-                          <Building2 className="w-4 h-4 text-blue-600" />
+                          <Building2 className="w-4 h-4 text-[#7C3AED]" />
                           {t.name}
                         </div>
                         <div className="text-xs text-slate-400">{t.business_type}</div>
@@ -349,7 +349,7 @@ export const SuperAdminPage: React.FC = () => {
                 <Button type="button" variant="outline" onClick={() => setShowCreateModal(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={createMutation.isPending} className="bg-purple-600 hover:bg-purple-700">
+                <Button type="submit" disabled={createMutation.isPending} className="bg-[#8B5CF6] hover:bg-[#7C3AED]">
                   {createMutation.isPending ? 'Provisioning...' : 'Provision Tenant'}
                 </Button>
               </div>

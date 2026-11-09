@@ -176,11 +176,11 @@ export const DashboardPage: React.FC = () => {
 
           {/* Export Action */}
           <Button
-            variant="accent"
+            variant="default"
             size="sm"
             onClick={handleExportExcel}
             disabled={isExporting}
-            className="flex items-center gap-1.5 text-xs"
+            className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white flex items-center gap-1.5 text-xs shadow-xs"
           >
             <FileSpreadsheet className="w-3.5 h-3.5" />
             <span>{isExporting ? 'Exporting...' : 'Export Excel'}</span>
@@ -431,8 +431,8 @@ export const DashboardPage: React.FC = () => {
                       <stop offset="95%" stopColor="#172B4D" stopOpacity={0.0} />
                     </linearGradient>
                     <linearGradient id="chartNetSalesGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#16A36A" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#16A36A" stopOpacity={0.0} />
+                      <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5EAF0" />
@@ -464,15 +464,16 @@ export const DashboardPage: React.FC = () => {
                   <Area
                     type="monotone"
                     dataKey="grossSales"
-                    stroke="#172B4D"
-                    strokeWidth={2}
+                    stroke="#243B5A"
+                    strokeWidth={1.5}
+                    strokeDasharray="4 4"
                     fillOpacity={1}
                     fill="url(#chartGrossSalesGrad)"
                   />
                   <Area
                     type="monotone"
                     dataKey="netSales"
-                    stroke="#16A36A"
+                    stroke="#8B5CF6"
                     strokeWidth={2}
                     fillOpacity={1}
                     fill="url(#chartNetSalesGrad)"
@@ -488,7 +489,7 @@ export const DashboardPage: React.FC = () => {
                 No verified POS transactions were recorded for {period}. Import ZenBiller sales to populate revenue graphs.
               </p>
               <Link to="/sales">
-                <Button size="sm" variant="outline" className="mt-3">
+                <Button size="sm" variant="secondary" className="mt-3">
                   Import Sales Data
                 </Button>
               </Link>

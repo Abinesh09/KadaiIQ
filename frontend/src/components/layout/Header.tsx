@@ -108,7 +108,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
       <div className="flex items-center gap-3 shrink-0">
         {/* Tenant Switcher */}
         <div className="flex items-center gap-2 bg-[#F5F7FA] border border-[#E5EAF0] rounded-md px-2.5 py-1">
-          <Building2 className="w-3.5 h-3.5 text-[#172B4D] shrink-0" />
+          <Building2 className="w-3.5 h-3.5 text-[#7C3AED] shrink-0" />
           {availableTenants.length > 1 ? (
             <div className="relative">
               <select
@@ -129,14 +129,14 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
               {activeTenant?.tenant_name || 'KadaiIQ Store'}
             </span>
           )}
-          <Badge variant="outline" className="text-[10px] py-0 px-1.5 border-[#E5EAF0] text-[#64748B] bg-white hidden sm:inline-flex">
+          <Badge variant="outline" className="text-[10px] py-0 px-1.5 border-[#EDE9FE] text-[#5B45B5] bg-[#F5F3FF] hidden sm:inline-flex font-semibold">
             {activeTenant?.role_name || (activeTenant?.is_super_admin ? 'Super Admin' : 'Admin')}
           </Badge>
         </div>
 
         {/* User Account & Logout */}
         <div className="flex items-center gap-2.5 pl-2 border-l border-[#E5EAF0]">
-          <div className="w-7 h-7 rounded-md bg-[#172B4D] text-white flex items-center justify-center font-bold text-xs">
+          <div className="w-7 h-7 rounded-md bg-[#EDE9FE] text-[#5B45B5] border border-[#8B5CF6]/20 flex items-center justify-center font-bold text-xs">
             {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
           </div>
           <div className="hidden lg:block text-left">

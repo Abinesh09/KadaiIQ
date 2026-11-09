@@ -233,7 +233,7 @@ export const AnalyticsPage: React.FC = () => {
             size="sm"
             onClick={handleExportExcel}
             disabled={isExporting}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm flex items-center gap-1.5"
+            className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shadow-xs flex items-center gap-1.5"
           >
             <FileSpreadsheet className="w-4 h-4" />
             {isExporting ? 'Generating Excel...' : 'Export Excel (.xlsx)'}
@@ -746,7 +746,7 @@ export const AnalyticsPage: React.FC = () => {
                 placeholder="Search product, SKU, barcode..."
                 value={productSearch}
                 onChange={(e) => setProductSearch(e.target.value)}
-                className="pl-8 pr-3 py-1.5 border border-slate-200 rounded-lg text-xs bg-white w-64 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="pl-8 pr-3 py-1.5 border border-[#E5EAF0] rounded-lg text-xs bg-white w-64 focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
               />
             </div>
           </div>

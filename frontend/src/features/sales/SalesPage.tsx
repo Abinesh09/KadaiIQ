@@ -191,7 +191,7 @@ export const SalesPage: React.FC = () => {
           </Button>
           <Button
             size="sm"
-            className="bg-emerald-600 hover:bg-emerald-700 text-white"
+            className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shadow-xs"
             onClick={() => setShowImportModal(true)}
           >
             <UploadCloud className="w-4 h-4 mr-1.5" />
@@ -316,14 +316,14 @@ export const SalesPage: React.FC = () => {
                   placeholder="Search bill number or POS ID..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="w-full pl-9 pr-4 py-2 border border-[#E5EAF0] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:border-transparent"
                 />
               </div>
 
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="px-3 py-2 border border-[#E5EAF0] rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
               >
                 <option value="">All Statuses</option>
                 <option value="COMPLETED">Completed</option>
@@ -337,7 +337,7 @@ export const SalesPage: React.FC = () => {
                   type="date"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
-                  className="px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="px-2.5 py-1.5 border border-[#E5EAF0] rounded-lg text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
                 />
               </div>
 
@@ -347,7 +347,7 @@ export const SalesPage: React.FC = () => {
                   type="date"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
-                  className="px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="px-2.5 py-1.5 border border-[#E5EAF0] rounded-lg text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
                 />
               </div>
 
@@ -417,7 +417,7 @@ export const SalesPage: React.FC = () => {
                           </p>
                           <Button
                             size="sm"
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white mt-2"
+                            className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white mt-2 shadow-xs"
                             onClick={() => setShowImportModal(true)}
                           >
                             <UploadCloud className="w-4 h-4 mr-1.5" />
@@ -812,7 +812,7 @@ export const SalesPage: React.FC = () => {
 
                   <Button
                     size="sm"
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white mt-4"
+                    className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white mt-4 shadow-xs"
                     onClick={resetImportModal}
                   >
                     Done & View Sales
@@ -827,7 +827,7 @@ export const SalesPage: React.FC = () => {
                       <select
                         value={sourceSystem}
                         onChange={(e) => setSourceSystem(e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className="w-full px-3 py-2 border border-[#E5EAF0] rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
                       >
                         <option value="ZenBiller">ZenBiller POS</option>
                         <option value="Tally">Tally Prime</option>
@@ -842,7 +842,7 @@ export const SalesPage: React.FC = () => {
                           type="checkbox"
                           checked={deductInventory}
                           onChange={(e) => setDeductInventory(e.target.checked)}
-                          className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 w-4 h-4"
+                          className="rounded border-[#E5EAF0] text-[#8B5CF6] focus:ring-[#8B5CF6] w-4 h-4"
                         />
                         <span>Automatically deduct variant stock</span>
                       </label>
@@ -944,8 +944,8 @@ export const SalesPage: React.FC = () => {
                       </div>
 
                       {/* Deduplication Guarantee callout */}
-                      <div className="p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-blue-900 flex items-start gap-2">
-                        <ShieldCheck className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <div className="p-3 bg-[#F5F3FF] border border-[#EDE9FE] rounded-lg text-xs text-[#5B45B5] flex items-start gap-2">
+                        <ShieldCheck className="w-4 h-4 text-[#7C3AED] flex-shrink-0 mt-0.5" />
                         <div>
                           <span className="font-semibold block">Strict Deduplication Guaranteed</span>
                           Bills already imported under ({sourceSystem}) will be ignored without creating duplicate records or double deducting stock.
@@ -964,7 +964,7 @@ export const SalesPage: React.FC = () => {
                 </Button>
                 <Button
                   size="sm"
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shadow-xs"
                   disabled={!previewData || importMutation.isPending}
                   onClick={handleConfirmImport}
                 >

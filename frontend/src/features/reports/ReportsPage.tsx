@@ -150,7 +150,7 @@ export const ReportsPage: React.FC = () => {
           </Button>
           <Button
             size="sm"
-            className="bg-emerald-600 hover:bg-emerald-700 text-white"
+            className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shadow-xs"
             onClick={handleDownloadCSV}
           >
             <Download className="w-4 h-4 mr-1.5" />
@@ -250,7 +250,7 @@ export const ReportsPage: React.FC = () => {
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
               placeholder={`Search ${reportType} report records...`}
-              className="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+              className="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-[#8B5CF6] focus:outline-none"
             />
           </div>
 
@@ -488,7 +488,7 @@ export const ReportsPage: React.FC = () => {
                               ? 'text-rose-700 bg-rose-50 border-rose-200 text-[10px]'
                               : m.movement_type === 'PURCHASE'
                               ? 'text-emerald-700 bg-emerald-50 border-emerald-200 text-[10px]'
-                              : 'text-blue-700 bg-blue-50 border-blue-200 text-[10px]'
+                              : 'text-[#5B45B5] bg-[#EDE9FE] border-[#8B5CF6]/30 text-[10px]'
                           }
                         >
                           {m.movement_type}

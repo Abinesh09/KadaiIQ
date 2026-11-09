@@ -64,7 +64,7 @@ export const ResetPasswordPage: React.FC = () => {
         <Card className="rounded-2xl border-slate-200/90 shadow-md">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Lock className="w-5 h-5 text-blue-600" />
+              <Lock className="w-5 h-5 text-[#7C3AED]" />
               Set New Password
             </CardTitle>
             <CardDescription>Enter the token received and choose your new password</CardDescription>
@@ -101,7 +101,7 @@ export const ResetPasswordPage: React.FC = () => {
                     value={token}
                     onChange={(e) => setToken(e.target.value)}
                     placeholder="Enter reset token"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
                   />
                 </div>
 
@@ -113,7 +113,7 @@ export const ResetPasswordPage: React.FC = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
                   />
                 </div>
 
@@ -125,7 +125,7 @@ export const ResetPasswordPage: React.FC = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
                   />
                 </div>
               </CardContent>

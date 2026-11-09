@@ -160,14 +160,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
         {/* Brand Header */}
         <div className="h-14 flex items-center justify-between px-5 border-b border-[#E5EAF0] bg-white">
           <Link to="/" className="flex items-center gap-2.5 group" onClick={onClose}>
-            <div className="w-8 h-8 rounded-lg bg-[#172B4D] text-white flex items-center justify-center font-bold text-sm shadow-2xs group-hover:bg-[#243B5A] transition-colors">
-              <span className="font-mono text-[#16A36A] font-extrabold mr-0.5">K</span>
+            <div className="w-8 h-8 rounded-lg bg-[#8B5CF6] text-white flex items-center justify-center font-bold text-sm shadow-2xs group-hover:bg-[#7C3AED] transition-colors">
+              <span className="font-mono text-[#EDE9FE] font-extrabold mr-0.5">K</span>
               <span className="text-white text-xs">IQ</span>
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
                 <span className="text-base font-bold text-[#172033] tracking-tight leading-none">KadaiIQ</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#16A36A] inline-block" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#8B5CF6] inline-block" />
               </div>
               <span className="text-[10px] font-medium text-[#64748B] tracking-wider uppercase mt-0.5">Retail Analytics</span>
             </div>
@@ -177,7 +177,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
           {onClose && (
             <button
               onClick={onClose}
-              className="lg:hidden p-1.5 text-[#64748B] hover:text-[#172033] hover:bg-[#F5F7FA] rounded-md transition-colors cursor-pointer"
+              className="lg:hidden p-1.5 text-[#64748B] hover:text-[#5B45B5] hover:bg-[#F5F3FF] rounded-md transition-colors cursor-pointer"
               aria-label="Close menu"
             >
               <X className="w-4 h-4" />
@@ -188,7 +188,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
         {/* Current Active Tenant Mini-Card */}
         <div className="px-3.5 pt-3 pb-1">
           <div className="bg-[#F5F7FA] border border-[#E5EAF0] rounded-lg p-2.5 flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-md bg-[#172B4D] text-white flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-md bg-[#EDE9FE] text-[#7C3AED] flex items-center justify-center shrink-0">
               <Store className="w-3.5 h-3.5" />
             </div>
             <div className="min-w-0 flex-1">
@@ -220,15 +220,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
                     className={cn(
                       'group flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors',
                       active
-                        ? 'bg-[#172B4D] text-white font-semibold shadow-2xs'
-                        : 'text-[#64748B] hover:bg-[#F5F7FA] hover:text-[#172033]'
+                        ? 'bg-[#EDE9FE] text-[#5B45B5] font-semibold border-l-3 border-[#8B5CF6] shadow-2xs'
+                        : 'text-[#64748B] hover:bg-[#F5F3FF] hover:text-[#5B45B5]'
                     )}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <Icon
                         className={cn(
                           'w-4 h-4 transition-colors shrink-0',
-                          active ? 'text-[#16A36A]' : 'text-[#64748B] group-hover:text-[#172033]'
+                          active ? 'text-[#7C3AED]' : 'text-[#64748B] group-hover:text-[#5B45B5]'
                         )}
                       />
                       <span className="truncate">{item.label}</span>
@@ -251,20 +251,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
                 className={cn(
                   'group flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors',
                   isItemActive('/super-admin')
-                    ? 'bg-[#172B4D] text-white font-semibold'
-                    : 'text-[#64748B] hover:bg-[#F5F7FA] hover:text-[#172033]'
+                    ? 'bg-[#EDE9FE] text-[#5B45B5] font-semibold border-l-3 border-[#8B5CF6] shadow-2xs'
+                    : 'text-[#64748B] hover:bg-[#F5F3FF] hover:text-[#5B45B5]'
                 )}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <ShieldCheck
                     className={cn(
                       'w-4 h-4 transition-colors shrink-0',
-                      isItemActive('/super-admin') ? 'text-[#16A36A]' : 'text-[#64748B]'
+                      isItemActive('/super-admin') ? 'text-[#7C3AED]' : 'text-[#64748B] group-hover:text-[#5B45B5]'
                     )}
                   />
                   <span className="truncate">Super Admin</span>
                 </div>
-                <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-[#E5EAF0] text-[#64748B] bg-white">
+                <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-[#E5EAF0] text-[#5B45B5] bg-white">
                   Root
                 </Badge>
               </Link>

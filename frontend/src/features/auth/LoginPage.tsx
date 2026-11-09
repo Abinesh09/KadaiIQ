@@ -40,12 +40,12 @@ export const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 selection:bg-blue-100 selection:text-blue-900">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 selection:bg-[#EDE9FE] selection:text-[#5B45B5]">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-slate-900 via-blue-900 to-indigo-700 flex items-center justify-center text-white shadow-md ring-1 ring-blue-500/20 mb-3">
-            <span className="font-mono text-emerald-400 font-extrabold text-xl mr-0.5">K</span>
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#8B5CF6] to-[#7C3AED] flex items-center justify-center text-white shadow-md ring-1 ring-[#8B5CF6]/30 mb-3">
+            <span className="font-mono text-[#EDE9FE] font-extrabold text-xl mr-0.5">K</span>
             <span className="text-white text-xs font-bold">IQ</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -77,7 +77,7 @@ export const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="store.manager@retail.com"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:bg-white transition-all"
               />
             </div>
 
@@ -86,7 +86,7 @@ export const LoginPage: React.FC = () => {
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider" htmlFor="password">
                   Password
                 </label>
-                <Link to="/forgot-password" className="text-xs font-semibold text-blue-600 hover:text-blue-700">
+                <Link to="/forgot-password" className="text-xs font-semibold text-[#8B5CF6] hover:text-[#7C3AED]">
                   Forgot password?
                 </Link>
               </div>
@@ -97,14 +97,14 @@ export const LoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all font-mono"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:bg-white transition-all font-mono"
               />
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-2.5 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white font-semibold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? (
                 <span>Authenticating...</span>
@@ -121,9 +121,9 @@ export const LoginPage: React.FC = () => {
               <button
                 type="button"
                 onClick={fillSuperAdmin}
-                className="w-full py-2 px-3 bg-slate-100/80 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer border border-slate-200/60"
+                className="w-full py-2 px-3 bg-[#F5F3FF] hover:bg-[#EDE9FE] text-[#5B45B5] text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer border border-[#EDE9FE]"
               >
-                <ShieldCheck className="w-4 h-4 text-purple-600" />
+                <ShieldCheck className="w-4 h-4 text-[#8B5CF6]" />
                 <span>Auto-fill Super Admin Credentials</span>
               </button>
             </div>
@@ -132,7 +132,7 @@ export const LoginPage: React.FC = () => {
           {/* New Store Registration Link */}
           <div className="mt-6 text-center text-xs text-slate-500">
             <span>Looking to onboard your retail business? </span>
-            <Link to="/register" className="font-bold text-blue-600 hover:underline">
+            <Link to="/register" className="font-bold text-[#8B5CF6] hover:underline">
               Create New Tenant
             </Link>
           </div>
@@ -141,15 +141,15 @@ export const LoginPage: React.FC = () => {
         {/* Feature Badges Footer */}
         <div className="mt-8 grid grid-cols-3 gap-2 text-center text-[11px] text-slate-500 font-medium">
           <div className="flex flex-col items-center gap-1 p-2 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
-            <TrendingUp className="w-4 h-4 text-emerald-600" />
+            <TrendingUp className="w-4 h-4 text-[#7C3AED]" />
             <span>Sales Analytics</span>
           </div>
           <div className="flex flex-col items-center gap-1 p-2 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
-            <Boxes className="w-4 h-4 text-blue-600" />
+            <Boxes className="w-4 h-4 text-[#7C3AED]" />
             <span>Footwear Matrix</span>
           </div>
           <div className="flex flex-col items-center gap-1 p-2 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
-            <Percent className="w-4 h-4 text-indigo-600" />
+            <Percent className="w-4 h-4 text-[#7C3AED]" />
             <span>GST Compliance</span>
           </div>
         </div>

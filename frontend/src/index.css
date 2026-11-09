@@ -5,21 +5,21 @@
   --font-mono: 'JetBrains Mono', monospace;
   --color-main-bg: #F5F7FA;
   --color-card-bg: #FFFFFF;
-  --color-primary-navy: #172B4D;
-  --color-secondary-navy: #243B5A;
-  --color-primary-accent: #16A36A;
+  --color-primary-purple: #8B5CF6;
+  --color-primary-hover: #7C3AED;
+  --color-deep-purple: #5B45B5;
+  --color-light-lavender: #EDE9FE;
+  --color-pale-lavender: #F5F3FF;
+  --color-soft-blue: #DBEAFE;
+  --color-deep-blue: #3156A3;
   --color-text-primary: #172033;
   --color-text-secondary: #64748B;
   --color-border-subtle: #E5EAF0;
   --color-warning-amber: #D97706;
   --color-danger-red: #DC2626;
-  /* Premium Lavender + Purple + Soft Blue Tab Palette */
-  --color-tab-selected-bg: #EDE9FE;
-  --color-tab-selected-text: #5B45B5;
-  --color-tab-indicator: #8B5CF6;
-  --color-tab-hover-bg: #F5F3FF;
-  --color-accent-blue-bg: #DBEAFE;
-  --color-accent-blue-text: #3156A3;
+  --color-primary-navy: #172B4D;
+  --color-secondary-navy: #243B5A;
+  --color-primary-accent: #8B5CF6;
 }
 
 @layer base {
@@ -28,19 +28,19 @@
     --foreground: 221 38% 15%;
     --card: 0 0% 100%;
     --card-foreground: 221 38% 15%;
-    --primary: 218 54% 20%;
+    --primary: 262 83% 58%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 215 43% 25%;
-    --secondary-foreground: 0 0% 100%;
-    --accent: 153 76% 36%;
+    --secondary: 250 89% 96%;
+    --secondary-foreground: 252 45% 49%;
+    --accent: 258 90% 66%;
     --accent-foreground: 0 0% 100%;
-    --muted: 210 20% 96%;
+    --muted: 255 100% 98%;
     --muted-foreground: 215 16% 47%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
     --border: 214 24% 92%;
     --input: 214 24% 92%;
-    --ring: 153 76% 36%;
+    --ring: 262 83% 58%;
     --radius: 0.625rem;
   }
 }

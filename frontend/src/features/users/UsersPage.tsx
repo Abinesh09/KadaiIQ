@@ -54,7 +54,7 @@ export const UsersPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <Users className="w-6 h-6 text-blue-600" />
+            <Users className="w-6 h-6 text-[#7C3AED]" />
             Organisation Staff & Members
           </h1>
           <p className="text-sm text-slate-500 mt-1">
@@ -62,7 +62,7 @@ export const UsersPage: React.FC = () => {
           </p>
         </div>
 
-        <Button onClick={() => setShowInviteModal(true)}>
+        <Button onClick={() => setShowInviteModal(true)} className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shadow-xs">
           <UserPlus className="w-4 h-4 mr-2" />
           Invite Staff Member
         </Button>
@@ -98,8 +98,8 @@ export const UsersPage: React.FC = () => {
                       <td className="px-4 py-3 font-semibold text-slate-900">{m.name}</td>
                       <td className="px-4 py-3">{m.email}</td>
                       <td className="px-4 py-3">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                          <Shield className="w-3 h-3 text-blue-600" />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#EDE9FE] text-[#5B45B5] border border-[#8B5CF6]/30">
+                          <Shield className="w-3 h-3 text-[#7C3AED]" />
                           {m.role_name}
                         </span>
                       </td>

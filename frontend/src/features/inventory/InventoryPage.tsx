@@ -89,7 +89,7 @@ export const InventoryPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <Boxes className="w-6 h-6 text-indigo-600" />
+            <Boxes className="w-6 h-6 text-[#7C3AED]" />
             Inventory & Stock Movement Ledger
           </h1>
           <p className="text-sm text-slate-500 mt-1">
@@ -97,7 +97,7 @@ export const InventoryPage: React.FC = () => {
           </p>
         </div>
 
-        <Button onClick={() => setShowAdjustModal(true)} className="bg-indigo-600 hover:bg-indigo-700">
+        <Button onClick={() => setShowAdjustModal(true)} className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shadow-xs">
           <PlusCircle className="w-4 h-4 mr-2" />
           Record Stock Adjustment
         </Button>
@@ -108,7 +108,7 @@ export const InventoryPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs font-semibold uppercase text-slate-500">Total Stock Units</CardTitle>
-            <Boxes className="w-4 h-4 text-indigo-600" />
+            <Boxes className="w-4 h-4 text-[#7C3AED]" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-slate-900">
@@ -163,7 +163,7 @@ export const InventoryPage: React.FC = () => {
         <CardHeader>
           <CardTitle className="text-base flex items-center justify-between">
             <span className="flex items-center gap-2">
-              <History className="w-4 h-4 text-indigo-600" />
+              <History className="w-4 h-4 text-[#7C3AED]" />
               Stock Movement Ledger ({movements.length})
             </span>
             <span className="text-xs font-normal text-slate-500">
@@ -244,7 +244,7 @@ export const InventoryPage: React.FC = () => {
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Layers className="w-5 h-5 text-indigo-600" />
+                <Layers className="w-5 h-5 text-[#7C3AED]" />
                 Record Stock Movement
               </h2>
               <button
@@ -350,7 +350,7 @@ export const InventoryPage: React.FC = () => {
                 <Button type="button" variant="outline" onClick={() => setShowAdjustModal(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={adjustMutation.isPending} className="bg-indigo-600 hover:bg-indigo-700">
+                <Button type="submit" disabled={adjustMutation.isPending} className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shadow-xs">
                   {adjustMutation.isPending ? 'Recording Movement...' : 'Save Movement'}
                 </Button>
               </div>

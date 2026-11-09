@@ -161,40 +161,43 @@ export const GSTPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Tabs */}
-      <div className="flex border-b border-slate-200 gap-4">
+      {/* Navigation Tabs (Single-Selection Soft Lavender & Deep Purple) */}
+      <div className="bg-[#F5F7FA] p-1.5 rounded-xl border border-[#E5EAF0] inline-flex items-center gap-1.5">
         <button
+          type="button"
           onClick={() => setActiveTab('filing')}
-          className={`pb-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-1.5 ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'filing'
-              ? 'border-purple-600 text-purple-600'
-              : 'border-transparent text-slate-500 hover:text-slate-700'
+              ? 'bg-[#EDE9FE] text-[#5B45B5] shadow-xs border border-[#8B5CF6]/30'
+              : 'text-[#64748B] hover:text-[#5B45B5] hover:bg-[#F5F3FF] border border-transparent'
           }`}
         >
-          <FileText className="w-4 h-4" />
-          GSTR-1 Monthly Return
+          <FileText className={`w-3.5 h-3.5 ${activeTab === 'filing' ? 'text-[#8B5CF6]' : 'text-[#64748B]'}`} />
+          <span>GSTR-1 Monthly Return</span>
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab('gstr3b')}
-          className={`pb-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-1.5 ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'gstr3b'
-              ? 'border-purple-600 text-purple-600'
-              : 'border-transparent text-slate-500 hover:text-slate-700'
+              ? 'bg-[#EDE9FE] text-[#5B45B5] shadow-xs border border-[#8B5CF6]/30'
+              : 'text-[#64748B] hover:text-[#5B45B5] hover:bg-[#F5F3FF] border border-transparent'
           }`}
         >
-          <Percent className="w-4 h-4" />
-          GSTR-3B Tax Liability
+          <Percent className={`w-3.5 h-3.5 ${activeTab === 'gstr3b' ? 'text-[#8B5CF6]' : 'text-[#64748B]'}`} />
+          <span>GSTR-3B Tax Liability</span>
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab('settings')}
-          className={`pb-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-1.5 ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'settings'
-              ? 'border-purple-600 text-purple-600'
-              : 'border-transparent text-slate-500 hover:text-slate-700'
+              ? 'bg-[#EDE9FE] text-[#5B45B5] shadow-xs border border-[#8B5CF6]/30'
+              : 'text-[#64748B] hover:text-[#5B45B5] hover:bg-[#F5F3FF] border border-transparent'
           }`}
         >
-          <Building2 className="w-4 h-4" />
-          GST Settings & Rates
+          <Building2 className={`w-3.5 h-3.5 ${activeTab === 'settings' ? 'text-[#8B5CF6]' : 'text-[#64748B]'}`} />
+          <span>GST Settings & Rates</span>
         </button>
       </div>
 
@@ -258,7 +261,7 @@ export const GSTPage: React.FC = () => {
             <Card className="border-slate-200">
               <CardContent className="p-5">
                 <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Central Tax (CGST)</span>
-                <h3 className="text-2xl font-bold text-blue-600 font-mono mt-1">
+                <h3 className="text-2xl font-bold text-[#7C3AED] font-mono mt-1">
                   ₹{Number(gstr1?.total_cgst || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </h3>
                 <p className="text-xs text-slate-400 mt-1">50% Intra-State Rate Share</p>
@@ -268,7 +271,7 @@ export const GSTPage: React.FC = () => {
             <Card className="border-slate-200">
               <CardContent className="p-5">
                 <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">State Tax (SGST)</span>
-                <h3 className="text-2xl font-bold text-indigo-600 font-mono mt-1">
+                <h3 className="text-2xl font-bold text-[#8B5CF6] font-mono mt-1">
                   ₹{Number(gstr1?.total_sgst || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </h3>
                 <p className="text-xs text-slate-400 mt-1">50% Intra-State Rate Share</p>
@@ -329,10 +332,10 @@ export const GSTPage: React.FC = () => {
                         <td className="px-6 py-4 text-right font-medium text-slate-900">
                           ₹{Number(slab.taxable_value).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </td>
-                        <td className="px-6 py-4 text-right text-blue-600">
+                        <td className="px-6 py-4 text-right text-[#7C3AED]">
                           ₹{Number(slab.cgst).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </td>
-                        <td className="px-6 py-4 text-right text-indigo-600">
+                        <td className="px-6 py-4 text-right text-[#8B5CF6]">
                           ₹{Number(slab.sgst).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </td>
                         <td className="px-6 py-4 text-right text-slate-400">₹0.00</td>
@@ -389,10 +392,10 @@ export const GSTPage: React.FC = () => {
                         <td className="px-6 py-4 text-right">
                           ₹{Number(hsn.taxable_value).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </td>
-                        <td className="px-6 py-4 text-right text-blue-600">
+                        <td className="px-6 py-4 text-right text-[#7C3AED]">
                           ₹{Number(hsn.cgst).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </td>
-                        <td className="px-6 py-4 text-right text-indigo-600">
+                        <td className="px-6 py-4 text-right text-[#8B5CF6]">
                           ₹{Number(hsn.sgst).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </td>
                         <td className="px-6 py-4 text-right font-bold text-purple-700">
@@ -445,10 +448,10 @@ export const GSTPage: React.FC = () => {
                       ₹{Number(gstr3b?.taxable_value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
                     <td className="px-6 py-4 text-right text-slate-400">₹0.00</td>
-                    <td className="px-6 py-4 text-right font-semibold text-blue-600">
+                    <td className="px-6 py-4 text-right font-semibold text-[#7C3AED]">
                       ₹{Number(gstr3b?.central_tax || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
-                    <td className="px-6 py-4 text-right font-semibold text-indigo-600">
+                    <td className="px-6 py-4 text-right font-semibold text-[#8B5CF6]">
                       ₹{Number(gstr3b?.state_ut_tax || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
                     <td className="px-6 py-4 text-right text-slate-400">₹0.00</td>
@@ -579,7 +582,7 @@ export const GSTPage: React.FC = () => {
                 <Button
                   type="submit"
                   size="sm"
-                  className="bg-purple-600 hover:bg-purple-700 text-white"
+                  className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shadow-xs"
                   disabled={updateMutation.isPending}
                 >
                   <Save className="w-4 h-4 mr-1.5" />
