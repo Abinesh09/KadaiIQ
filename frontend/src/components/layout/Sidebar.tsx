@@ -9,8 +9,10 @@ import {
   Settings,
   ShieldCheck,
   Percent,
+  Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/features/auth/AuthContext'
 
 const navItems = [
   { label: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -20,11 +22,13 @@ const navItems = [
   { label: 'Analytics', path: '/analytics', icon: TrendingUp },
   { label: 'Reports', path: '/reports', icon: FileSpreadsheet },
   { label: 'GST Config', path: '/gst', icon: Percent },
+  { label: 'Staff & Roles', path: '/users', icon: Users },
   { label: 'Settings', path: '/settings', icon: Settings },
 ]
 
 export const Sidebar: React.FC = () => {
   const location = useLocation()
+  const { isSuperAdmin } = useAuth()
 
   return (
     <aside className="w-64 border-r border-slate-200 bg-white flex flex-col h-screen">
@@ -64,23 +68,31 @@ export const Sidebar: React.FC = () => {
           )
         })}
 
-        <div className="pt-4 px-2 py-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
-          Administration
-        </div>
-        <Link
-          to="/super-admin"
-          className="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
-        >
-          <ShieldCheck className="w-4 h-4 text-purple-600" />
-          <span>Super Admin</span>
-        </Link>
+        {isSuperAdmin && (
+          <>
+            <div className="pt-4 px-2 py-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Platform Administration
+            </div>
+            <Link
+              to="/super-admin"
+              className={cn(
+                'flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                location.pathname === '/super-admin'
+                  ? 'bg-purple-50 text-purple-700 font-semibold'
+                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              )}
+            >
+              <ShieldCheck className="w-4 h-4 text-purple-600" />
+              <span>Super Admin Portal</span>
+            </Link>
+          </>
+        )}
       </nav>
 
       <div className="p-4 border-t border-slate-200 bg-slate-50 text-xs text-slate-500">
         <p className="font-semibold text-slate-700">KadaiIQ v1.0.0</p>
-        <p>Retail Multi-Tenant Platform</p>
+        <p>Tenant Isolated Multi-Store</p>
       </div>
     </aside>
   )
 }
-

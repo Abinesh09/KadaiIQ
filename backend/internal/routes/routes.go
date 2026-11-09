@@ -4,6 +4,9 @@ import (
 	"github.com/Abinesh09/KadaiIQ/backend/config"
 	"github.com/Abinesh09/KadaiIQ/backend/database"
 	"github.com/Abinesh09/KadaiIQ/backend/internal/controllers"
+	"github.com/Abinesh09/KadaiIQ/backend/internal/middleware"
+	"github.com/Abinesh09/KadaiIQ/backend/internal/repositories"
+	"github.com/Abinesh09/KadaiIQ/backend/internal/services"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -26,8 +29,49 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, dbManager *database.DBManag
 	// API v1 group
 	api := app.Group("/api/v1")
 
-	// Health endpoints
+	// Health routes
 	healthController := controllers.NewHealthController(cfg.AppVersion, dbManager)
 	api.Get("/health", healthController.Check)
 	api.Get("/health/db", healthController.CheckDB)
+
+	// If DB is initialized, mount Auth and Tenant management routes
+	if dbManager != nil && dbManager.DB != nil {
+		authRepo := repositories.NewAuthRepository(dbManager.DB)
+		tenantRepo := repositories.NewTenantRepository(dbManager.DB)
+
+		authService := services.NewAuthService(authRepo, tenantRepo, cfg)
+		tenantService := services.NewTenantService(tenantRepo, authRepo)
+
+		authCtrl := controllers.NewAuthController(authService)
+		tenantCtrl := controllers.NewTenantController(tenantService)
+
+		jwtAuth := middleware.JWTMiddleware(cfg.DatabaseURL)
+
+		// Public Auth Routes
+		auth := api.Group("/auth")
+		auth.Post("/login", authCtrl.Login)
+		auth.Post("/register", authCtrl.Register)
+		auth.Post("/refresh", authCtrl.RefreshToken)
+		auth.Post("/logout", authCtrl.Logout)
+		auth.Post("/forgot-password", authCtrl.ForgotPassword)
+		auth.Post("/reset-password", authCtrl.ResetPassword)
+
+		// Protected Auth Routes
+		auth.Get("/me", jwtAuth, authCtrl.Me)
+		auth.Post("/switch-tenant", jwtAuth, authCtrl.SwitchTenant)
+
+		// Super Admin Management Routes
+		superAdmin := api.Group("/super-admin", jwtAuth, middleware.RequireSuperAdmin())
+		superAdmin.Get("/tenants", tenantCtrl.ListTenants)
+		superAdmin.Post("/tenants", tenantCtrl.CreateTenant)
+		superAdmin.Put("/tenants/:id", tenantCtrl.UpdateTenant)
+		superAdmin.Patch("/tenants/:id/status", tenantCtrl.SetStatus)
+		superAdmin.Patch("/tenants/:id/features", tenantCtrl.ToggleFeature)
+
+		// Tenant-Scoped Management Routes
+		tenantScope := api.Group("/tenant", jwtAuth, middleware.RequireTenantContext())
+		tenantScope.Get("/members", tenantCtrl.GetMembers)
+		tenantScope.Post("/members", tenantCtrl.InviteMember)
+		tenantScope.Put("/members/:id/role", tenantCtrl.UpdateMemberRole)
+	}
 }
