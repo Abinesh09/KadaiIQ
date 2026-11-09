@@ -2,19 +2,25 @@ package config
 
 import (
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Port        string
-	DatabaseURL string
-	Environment string
-	AppVersion  string
+	Port              string
+	DatabaseURL       string
+	Environment       string
+	AppVersion        string
+	DBMaxOpenConns    int
+	DBMaxIdleConns    int
+	DBConnMaxLifetime time.Duration
+	DBConnMaxIdleTime time.Duration
+	DBTimeout         time.Duration
 }
 
 func LoadConfig() *Config {
-	// Load .env if present (ignore error if not present in production/container)
 	_ = godotenv.Load()
 
 	port := os.Getenv("PORT")
@@ -32,10 +38,33 @@ func LoadConfig() *Config {
 		env = "development"
 	}
 
+	maxOpen := getEnvAsInt("DB_MAX_OPEN_CONNS", 25)
+	maxIdle := getEnvAsInt("DB_MAX_IDLE_CONNS", 10)
+	lifetimeMinutes := getEnvAsInt("DB_CONN_MAX_LIFETIME_MINUTES", 30)
+	idleMinutes := getEnvAsInt("DB_CONN_MAX_IDLE_MINUTES", 5)
+	timeoutSeconds := getEnvAsInt("DB_TIMEOUT_SECONDS", 5)
+
 	return &Config{
-		Port:        port,
-		DatabaseURL: dbURL,
-		Environment: env,
-		AppVersion:  "1.0.0",
+		Port:              port,
+		DatabaseURL:       dbURL,
+		Environment:       env,
+		AppVersion:        "1.0.0",
+		DBMaxOpenConns:    maxOpen,
+		DBMaxIdleConns:    maxIdle,
+		DBConnMaxLifetime: time.Duration(lifetimeMinutes) * time.Minute,
+		DBConnMaxIdleTime: time.Duration(idleMinutes) * time.Minute,
+		DBTimeout:         time.Duration(timeoutSeconds) * time.Second,
 	}
+}
+
+func getEnvAsInt(name string, defaultValue int) int {
+	valStr := os.Getenv(name)
+	if valStr == "" {
+		return defaultValue
+	}
+	val, err := strconv.Atoi(valStr)
+	if err != nil {
+		return defaultValue
+	}
+	return val
 }

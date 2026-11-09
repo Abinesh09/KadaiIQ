@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/Abinesh09/KadaiIQ/backend/config"
+	"github.com/Abinesh09/KadaiIQ/backend/database"
 	"github.com/Abinesh09/KadaiIQ/backend/internal/controllers"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -9,7 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
-func SetupRoutes(app *fiber.App, cfg *config.Config) {
+func SetupRoutes(app *fiber.App, cfg *config.Config, dbManager *database.DBManager) {
 	// Global Middlewares
 	app.Use(recover.New())
 	app.Use(logger.New(logger.Config{
@@ -25,7 +26,8 @@ func SetupRoutes(app *fiber.App, cfg *config.Config) {
 	// API v1 group
 	api := app.Group("/api/v1")
 
-	// Health routes
-	healthController := controllers.NewHealthController(cfg.AppVersion)
+	// Health endpoints
+	healthController := controllers.NewHealthController(cfg.AppVersion, dbManager)
 	api.Get("/health", healthController.Check)
+	api.Get("/health/db", healthController.CheckDB)
 }
