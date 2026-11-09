@@ -4,95 +4,222 @@ import {
   LayoutDashboard,
   Package,
   Boxes,
+  ShoppingCart,
   TrendingUp,
   FileSpreadsheet,
   Settings,
   ShieldCheck,
   Percent,
   Users,
+  Store,
+  X,
+  Sparkles,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/features/auth/AuthContext'
+import { Badge } from '@/components/ui/badge'
 
-const navItems = [
-  { label: 'Dashboard', path: '/', icon: LayoutDashboard },
-  { label: 'Products', path: '/products', icon: Package },
-  { label: 'Inventory', path: '/inventory', icon: Boxes },
-  { label: 'Sales & POS', path: '/sales', icon: TrendingUp },
-  { label: 'Analytics', path: '/analytics', icon: TrendingUp },
-  { label: 'Reports', path: '/reports', icon: FileSpreadsheet },
-  { label: 'GST Config', path: '/gst', icon: Percent },
-  { label: 'Staff & Roles', path: '/users', icon: Users },
-  { label: 'Settings', path: '/settings', icon: Settings },
+interface NavItem {
+  label: string
+  path: string
+  icon: React.ElementType
+  badge?: string
+}
+
+interface NavSection {
+  title: string
+  items: NavItem[]
+}
+
+const navSections: NavSection[] = [
+  {
+    title: 'Executive',
+    items: [
+      { label: 'Dashboard', path: '/', icon: LayoutDashboard },
+    ],
+  },
+  {
+    title: 'Retail Operations',
+    items: [
+      { label: 'Product Catalogue', path: '/products', icon: Package },
+      { label: 'Inventory & Stock', path: '/inventory', icon: Boxes },
+      { label: 'Sales & POS Records', path: '/sales', icon: ShoppingCart },
+    ],
+  },
+  {
+    title: 'Intelligence & Tax',
+    items: [
+      { label: 'Sales Analytics', path: '/analytics', icon: TrendingUp, badge: 'Insights' },
+      { label: 'Reports & Exports', path: '/reports', icon: FileSpreadsheet },
+      { label: 'GST Configuration', path: '/gst', icon: Percent },
+    ],
+  },
+  {
+    title: 'Organisation',
+    items: [
+      { label: 'Staff & Roles', path: '/users', icon: Users },
+      { label: 'Store Settings', path: '/settings', icon: Settings },
+    ],
+  },
 ]
 
-export const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isOpen?: boolean
+  onClose?: () => void
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => {
   const location = useLocation()
-  const { isSuperAdmin } = useAuth()
+  const { isSuperAdmin, activeTenant } = useAuth()
 
   return (
-    <aside className="w-64 border-r border-slate-200 bg-white flex flex-col h-screen">
-      <div className="h-16 flex items-center px-6 border-b border-slate-200">
-        <Link to="/" className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-lg">
-            K
-          </div>
-          <div>
-            <span className="text-lg font-bold text-slate-900 tracking-tight">KadaiIQ</span>
-            <span className="text-[10px] text-blue-600 font-semibold block -mt-1 tracking-wider uppercase">Retail SaaS</span>
-          </div>
-        </Link>
-      </div>
+    <>
+      {/* Mobile Backdrop Overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs lg:hidden transition-opacity"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
 
-      <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
-        <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
-          Tenant Workspace
-        </div>
-        {navItems.map((item) => {
-          const Icon = item.icon
-          const isActive = location.pathname === item.path
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                'flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-              )}
-            >
-              <Icon className={cn('w-4 h-4', isActive ? 'text-blue-600' : 'text-slate-400')} />
-              <span>{item.label}</span>
-            </Link>
-          )
-        })}
-
-        {isSuperAdmin && (
-          <>
-            <div className="pt-4 px-2 py-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Platform Administration
-            </div>
-            <Link
-              to="/super-admin"
-              className={cn(
-                'flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                location.pathname === '/super-admin'
-                  ? 'bg-purple-50 text-purple-700 font-semibold'
-                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-              )}
-            >
-              <ShieldCheck className="w-4 h-4 text-purple-600" />
-              <span>Super Admin Portal</span>
-            </Link>
-          </>
+      {/* Sidebar Container */}
+      <aside
+        className={cn(
+          'fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200/90 flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0',
+          isOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:shadow-none'
         )}
-      </nav>
+      >
+        {/* Brand Header */}
+        <div className="h-16 flex items-center justify-between px-5 border-b border-slate-200/80 bg-slate-50/60">
+          <Link to="/" className="flex items-center gap-3 group" onClick={onClose}>
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-slate-900 via-blue-900 to-indigo-700 flex items-center justify-center text-white font-bold text-base shadow-sm ring-1 ring-blue-500/20 group-hover:scale-105 transition-transform">
+              <span className="font-mono text-emerald-400 font-extrabold mr-0.5">K</span>
+              <span className="text-white text-xs">IQ</span>
+            </div>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1.5">
+                <span className="text-base font-extrabold text-slate-900 tracking-tight leading-none">KadaiIQ</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
+              </div>
+              <span className="text-[10px] font-semibold text-blue-700 tracking-wider uppercase mt-1">Retail SaaS</span>
+            </div>
+          </Link>
 
-      <div className="p-4 border-t border-slate-200 bg-slate-50 text-xs text-slate-500">
-        <p className="font-semibold text-slate-700">KadaiIQ v1.0.0</p>
-        <p>Tenant Isolated Multi-Store</p>
-      </div>
-    </aside>
+          {/* Close button on mobile */}
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="lg:hidden p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+              aria-label="Close menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
+        </div>
+
+        {/* Current Active Tenant Mini-Card */}
+        <div className="px-4 pt-3.5 pb-2">
+          <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-2.5 flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+              <Store className="w-3.5 h-3.5" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <span className="text-xs font-semibold text-slate-800 block truncate leading-tight">
+                {activeTenant?.tenant_name || 'KadaiIQ Store'}
+              </span>
+              <span className="text-[10px] font-medium text-slate-400 block truncate">
+                {activeTenant?.role_name || (activeTenant?.is_super_admin ? 'Super Admin' : 'Active Store')}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Sections */}
+        <nav className="flex-1 px-3 py-2 space-y-4 overflow-y-auto">
+          {navSections.map((section) => (
+            <div key={section.title} className="space-y-1">
+              <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                {section.title}
+              </div>
+              {section.items.map((item) => {
+                const Icon = item.icon
+                const isActive = location.pathname === item.path
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={onClose}
+                    className={cn(
+                      'group flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150',
+                      isActive
+                        ? 'bg-blue-50/90 text-blue-800 font-semibold shadow-xs ring-1 ring-blue-500/20'
+                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    )}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <Icon
+                        className={cn(
+                          'w-4 h-4 transition-colors shrink-0',
+                          isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
+                        )}
+                      />
+                      <span className="truncate">{item.label}</span>
+                    </div>
+                    {item.badge && (
+                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-0.5">
+                        <Sparkles className="w-2.5 h-2.5 text-emerald-600" />
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                )
+              })}
+            </div>
+          ))}
+
+          {/* Platform Administration Section (Super Admin Only) */}
+          {isSuperAdmin && (
+            <div className="space-y-1 pt-2 border-t border-slate-100">
+              <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-purple-600">
+                Platform Admin
+              </div>
+              <Link
+                to="/super-admin"
+                onClick={onClose}
+                className={cn(
+                  'group flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150',
+                  location.pathname === '/super-admin'
+                    ? 'bg-purple-50 text-purple-900 font-semibold ring-1 ring-purple-500/20'
+                    : 'text-slate-600 hover:bg-purple-50/50 hover:text-purple-900'
+                )}
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <ShieldCheck
+                    className={cn(
+                      'w-4 h-4 transition-colors shrink-0',
+                      location.pathname === '/super-admin' ? 'text-purple-600' : 'text-purple-400'
+                    )}
+                  />
+                  <span className="truncate">Super Admin Portal</span>
+                </div>
+                <Badge variant="outline" className="text-[9px] px-1 py-0 border-purple-200 text-purple-700 bg-purple-50">
+                  Root
+                </Badge>
+              </Link>
+            </div>
+          )}
+        </nav>
+
+        {/* Footer Info Area */}
+        <div className="p-3.5 border-t border-slate-200/80 bg-slate-50/70 text-xs">
+          <div className="flex items-center justify-between text-slate-500 text-[11px]">
+            <span className="font-semibold text-slate-700">KadaiIQ SaaS</span>
+            <span className="font-mono text-[10px] px-1.5 py-0.5 bg-slate-200/60 rounded text-slate-600">v1.0.0</span>
+          </div>
+          <p className="text-[10px] text-slate-400 mt-0.5">Isolated Multi-Tenant Security</p>
+        </div>
+      </aside>
+    </>
   )
 }
