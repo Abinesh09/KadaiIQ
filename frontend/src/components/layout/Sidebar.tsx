@@ -177,7 +177,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
           {onClose && (
             <button
               onClick={onClose}
-              className="lg:hidden p-1.5 text-[#64748B] hover:text-[#5B45B5] hover:bg-[#F5F3FF] rounded-md transition-colors cursor-pointer"
+              className="lg:hidden p-1.5 text-[#64748B] hover:text-[#5B21B6] hover:bg-[#F0EAFE] rounded-md transition-colors cursor-pointer"
               aria-label="Close menu"
             >
               <X className="w-4 h-4" />
@@ -220,15 +220,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
                     className={cn(
                       'group flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors',
                       active
-                        ? 'bg-[#EDE9FE] text-[#5B45B5] font-semibold border-l-3 border-[#8B5CF6] shadow-2xs'
-                        : 'text-[#64748B] hover:bg-[#F5F3FF] hover:text-[#5B45B5]'
+                        ? 'bg-[#DDD1FF] text-[#5B21B6] font-semibold border-l-3 border-[#8B5CF6] shadow-2xs'
+                        : 'text-[#64748B] hover:bg-[#F0EAFE] hover:text-[#5B21B6]'
                     )}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <Icon
                         className={cn(
                           'w-4 h-4 transition-colors shrink-0',
-                          active ? 'text-[#7C3AED]' : 'text-[#64748B] group-hover:text-[#5B45B5]'
+                          active ? 'text-[#6D28D9]' : 'text-[#64748B] group-hover:text-[#5B21B6]'
                         )}
                       />
                       <span className="truncate">{item.label}</span>
@@ -251,20 +251,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
                 className={cn(
                   'group flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors',
                   isItemActive('/super-admin')
-                    ? 'bg-[#EDE9FE] text-[#5B45B5] font-semibold border-l-3 border-[#8B5CF6] shadow-2xs'
-                    : 'text-[#64748B] hover:bg-[#F5F3FF] hover:text-[#5B45B5]'
+                    ? 'bg-[#DDD1FF] text-[#5B21B6] font-semibold border-l-3 border-[#8B5CF6] shadow-2xs'
+                    : 'text-[#64748B] hover:bg-[#F0EAFE] hover:text-[#5B21B6]'
                 )}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <ShieldCheck
                     className={cn(
                       'w-4 h-4 transition-colors shrink-0',
-                      isItemActive('/super-admin') ? 'text-[#7C3AED]' : 'text-[#64748B] group-hover:text-[#5B45B5]'
+                      isItemActive('/super-admin') ? 'text-[#6D28D9]' : 'text-[#64748B] group-hover:text-[#5B21B6]'
                     )}
                   />
                   <span className="truncate">Super Admin</span>
                 </div>
-                <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-[#E5EAF0] text-[#5B45B5] bg-white">
+                <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-[#E5EAF0] text-[#5B21B6] bg-white">
                   Root
                 </Badge>
               </Link>
