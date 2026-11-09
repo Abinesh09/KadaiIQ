@@ -73,6 +73,66 @@ export interface MemberData {
   created_at: string
 }
 
+// Product & Inventory Types
+export interface ProductVariantData {
+  id: string
+  product_id: string
+  size: string
+  colour: string
+  sku: string
+  barcode: string
+  purchase_price: string | number
+  selling_price: string | number
+  gst_rate: string | number
+  current_stock: number
+  min_stock_threshold: number
+  stock_status: 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK'
+}
+
+export interface ProductData {
+  id: string
+  name: string
+  product_code: string
+  sku?: string
+  barcode?: string
+  brand_name?: string
+  category_name?: string
+  brand_id?: string
+  category_id?: string
+  description?: string
+  gender: string
+  status: string
+  total_stock: number
+  variants: ProductVariantData[]
+  created_at: string
+}
+
+export interface StockMovementData {
+  id: string
+  variant_id: string
+  product_name: string
+  variant_details: string
+  barcode: string
+  movement_type: string
+  quantity: number
+  previous_stock: number
+  new_stock: number
+  unit_cost: string | number
+  reference_number?: string
+  notes?: string
+  created_by_name: string
+  created_at: string
+}
+
+export interface InventorySummaryData {
+  total_products: number
+  total_variants: number
+  total_stock_units: number
+  low_stock_count: number
+  out_of_stock_count: number
+  stock_valuation: string | number
+}
+
 const BASE_URL = import.meta.env.VITE_API_URL || '/api/v1'
 
 const getHeaders = (): Record<string, string> => {
@@ -223,7 +283,7 @@ export const apiService = {
     return data
   },
 
-  // Tenant Admin Endpoints
+  // Tenant Staff Endpoints
   async getMembers(): Promise<ApiResponse<MemberData[]>> {
     const res = await fetch(`${BASE_URL}/tenant/members`, {
       headers: getHeaders(),
@@ -241,6 +301,108 @@ export const apiService = {
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.message || 'Failed to invite member')
+    return data
+  },
+
+  // Products Endpoints
+  async getProducts(params?: { search?: string; gender?: string; page?: number }): Promise<ApiResponse<{ items: ProductData[]; total_count: number }>> {
+    const query = new URLSearchParams()
+    if (params?.search) query.set('search', params.search)
+    if (params?.gender) query.set('gender', params.gender)
+    if (params?.page) query.set('page', params.page.toString())
+
+    const res = await fetch(`${BASE_URL}/products?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch products')
+    return data
+  },
+
+  async createProduct(payload: {
+    name: string
+    product_code: string
+    gender: string
+    description?: string
+    variants: Array<{
+      size: string
+      colour: string
+      sku: string
+      barcode: string
+      purchase_price: number
+      selling_price: number
+      gst_rate: number
+      opening_stock: number
+      min_stock_threshold: number
+    }>
+  }): Promise<ApiResponse<ProductData>> {
+    const res = await fetch(`${BASE_URL}/products`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(payload),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to create product')
+    return data
+  },
+
+  async archiveProduct(id: string): Promise<ApiResponse<null>> {
+    const res = await fetch(`${BASE_URL}/products/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to archive product')
+    return data
+  },
+
+  async lookupBarcode(barcode: string): Promise<ApiResponse<ProductVariantData>> {
+    const res = await fetch(`${BASE_URL}/products/barcode/${encodeURIComponent(barcode)}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Barcode not found')
+    return data
+  },
+
+  // Inventory Endpoints
+  async getInventorySummary(): Promise<ApiResponse<InventorySummaryData>> {
+    const res = await fetch(`${BASE_URL}/inventory/summary`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch inventory summary')
+    return data
+  },
+
+  async getStockMovements(params?: { variant_id?: string; page?: number }): Promise<ApiResponse<{ items: StockMovementData[]; total_count: number }>> {
+    const query = new URLSearchParams()
+    if (params?.variant_id) query.set('variant_id', params.variant_id)
+    if (params?.page) query.set('page', params.page.toString())
+
+    const res = await fetch(`${BASE_URL}/inventory/movements?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch stock movements')
+    return data
+  },
+
+  async recordStockAdjustment(payload: {
+    variant_id: string
+    movement_type: string
+    quantity: number
+    unit_cost?: number
+    reference_number?: string
+    notes?: string
+  }): Promise<ApiResponse<StockMovementData>> {
+    const res = await fetch(`${BASE_URL}/inventory/adjustments`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(payload),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to adjust stock')
     return data
   },
 }

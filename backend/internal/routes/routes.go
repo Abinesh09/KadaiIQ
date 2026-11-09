@@ -34,18 +34,22 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, dbManager *database.DBManag
 	api.Get("/health", healthController.Check)
 	api.Get("/health/db", healthController.CheckDB)
 
-	// If DB is initialized, mount Auth and Tenant management routes
+	// If DB is initialized, mount Auth, Tenant, Product, and Inventory routes
 	if dbManager != nil && dbManager.DB != nil {
 		authRepo := repositories.NewAuthRepository(dbManager.DB)
 		tenantRepo := repositories.NewTenantRepository(dbManager.DB)
+		productRepo := repositories.NewProductRepository(dbManager.DB)
 
 		authService := services.NewAuthService(authRepo, tenantRepo, cfg)
 		tenantService := services.NewTenantService(tenantRepo, authRepo)
+		productService := services.NewProductService(productRepo)
 
 		authCtrl := controllers.NewAuthController(authService)
 		tenantCtrl := controllers.NewTenantController(tenantService)
+		productCtrl := controllers.NewProductController(productService)
 
 		jwtAuth := middleware.JWTMiddleware(cfg.DatabaseURL)
+		tenantScope := middleware.RequireTenantContext()
 
 		// Public Auth Routes
 		auth := api.Group("/auth")
@@ -68,10 +72,26 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, dbManager *database.DBManag
 		superAdmin.Patch("/tenants/:id/status", tenantCtrl.SetStatus)
 		superAdmin.Patch("/tenants/:id/features", tenantCtrl.ToggleFeature)
 
-		// Tenant-Scoped Management Routes
-		tenantScope := api.Group("/tenant", jwtAuth, middleware.RequireTenantContext())
-		tenantScope.Get("/members", tenantCtrl.GetMembers)
-		tenantScope.Post("/members", tenantCtrl.InviteMember)
-		tenantScope.Put("/members/:id/role", tenantCtrl.UpdateMemberRole)
+		// Tenant User Management Routes
+		tenantUserScope := api.Group("/tenant", jwtAuth, tenantScope)
+		tenantUserScope.Get("/members", tenantCtrl.GetMembers)
+		tenantUserScope.Post("/members", tenantCtrl.InviteMember)
+		tenantUserScope.Put("/members/:id/role", tenantCtrl.UpdateMemberRole)
+
+		// Products Management Routes (Tenant Scoped)
+		prodRoutes := api.Group("/products", jwtAuth, tenantScope)
+		prodRoutes.Get("/", productCtrl.ListProducts)
+		prodRoutes.Post("/", productCtrl.CreateProduct)
+		prodRoutes.Get("/meta/brands", productCtrl.GetBrands)
+		prodRoutes.Get("/meta/categories", productCtrl.GetCategories)
+		prodRoutes.Get("/barcode/:barcode", productCtrl.LookupBarcode)
+		prodRoutes.Get("/:id", productCtrl.GetProduct)
+		prodRoutes.Delete("/:id", productCtrl.ArchiveProduct)
+
+		// Inventory Management Routes (Tenant Scoped)
+		invRoutes := api.Group("/inventory", jwtAuth, tenantScope)
+		invRoutes.Get("/summary", productCtrl.GetInventorySummary)
+		invRoutes.Get("/movements", productCtrl.GetStockMovements)
+		invRoutes.Post("/adjustments", productCtrl.RecordStockAdjustment)
 	}
 }

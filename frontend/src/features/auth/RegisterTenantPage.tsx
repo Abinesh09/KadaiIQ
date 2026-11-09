@@ -170,3 +170,4 @@ export const RegisterTenantPage: React.FC = () => {
     </div>
   )
 }
+

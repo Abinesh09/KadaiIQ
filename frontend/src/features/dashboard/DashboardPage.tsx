@@ -1,18 +1,18 @@
 import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { apiService } from '@/services/api'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
   Activity,
   Layers,
   Database,
-  ShieldAlert,
   Boxes,
   TrendingUp,
   Receipt,
   CheckCircle2,
   AlertCircle,
+  Package,
 } from 'lucide-react'
 
 export const DashboardPage: React.FC = () => {
@@ -27,6 +27,13 @@ export const DashboardPage: React.FC = () => {
     queryFn: apiService.getDbHealth,
     refetchInterval: 30000,
   })
+
+  const { data: inventoryResp } = useQuery({
+    queryKey: ['inventory-summary-dashboard'],
+    queryFn: apiService.getInventorySummary,
+  })
+
+  const invSummary = inventoryResp?.data
 
   return (
     <div className="space-y-6">
@@ -85,7 +92,7 @@ export const DashboardPage: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-slate-900">₹0.00</div>
-            <p className="text-xs text-slate-500 mt-1">Ready for POS Import</p>
+            <p className="text-xs text-slate-500 mt-1">Ready for Phase 5 POS Import</p>
           </CardContent>
         </Card>
 
@@ -95,92 +102,90 @@ export const DashboardPage: React.FC = () => {
             <Boxes className="w-4 h-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900">0</div>
-            <p className="text-xs text-slate-500 mt-1">Product variant tracking</p>
+            <div className="text-2xl font-bold text-slate-900">{invSummary?.total_variants || 0}</div>
+            <p className="text-xs text-slate-500 mt-1">{invSummary?.total_products || 0} product models</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">Stock Units</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-600">Stock Units on Hand</CardTitle>
             <Layers className="w-4 h-4 text-indigo-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900">0 Units</div>
-            <p className="text-xs text-slate-500 mt-1">Stock movement ledger</p>
+            <div className="text-2xl font-bold text-slate-900">{invSummary?.total_stock_units || 0} Units</div>
+            <p className="text-xs text-slate-500 mt-1">
+              Valuation: ₹{Number(invSummary?.stock_valuation || 0).toLocaleString('en-IN')}
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">Tax Collected (GST)</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-600">Low & Out of Stock</CardTitle>
             <Receipt className="w-4 h-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900">₹0.00</div>
-            <p className="text-xs text-slate-500 mt-1">CGST / SGST / IGST</p>
+            <div className="text-2xl font-bold text-slate-900">
+              {invSummary?.low_stock_count || 0} / {invSummary?.out_of_stock_count || 0}
+            </div>
+            <p className="text-xs text-slate-500 mt-1">Low Stock / Out of Stock</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Architecture & Multi-Tenant Isolation Status */}
+      {/* Product & Variant Footwear Architecture */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Database className="w-5 h-5 text-blue-600" />
-              Database & Multi-Tenant Models (Phase 2)
+            <CardTitle className="text-base flex items-center gap-2">
+              <Package className="w-5 h-5 text-blue-600" />
+              Product & Variant Management (Phase 4)
             </CardTitle>
-            <CardDescription>
-              PostgreSQL schema with versioned migrations and repository tenant boundary checks
-            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-slate-600">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <span className="font-medium text-slate-700">Schema Migration Engine</span>
-              <Badge variant="outline">000001_initial_schema</Badge>
+            <div className="flex items-center justify-between border-b pb-2">
+              <span>Footwear Variants</span>
+              <Badge variant="outline">Size / Colour / SKU Matrix</Badge>
             </div>
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <span className="font-medium text-slate-700">Tenants & Memberships</span>
-              <Badge variant="success">Composite Unique Indexes</Badge>
+            <div className="flex items-center justify-between border-b pb-2">
+              <span>Barcode Support</span>
+              <Badge variant="success">EAN-13 / Scanner Ready</Badge>
             </div>
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <span className="font-medium text-slate-700">RBAC Foundation</span>
-              <Badge variant="outline">Super Admin, Owner, Admin, Manager, Staff</Badge>
+            <div className="flex items-center justify-between border-b pb-2">
+              <span>GST Compliance</span>
+              <Badge variant="outline">Footwear Standard (12%)</Badge>
             </div>
             <div className="flex items-center justify-between">
-              <span className="font-medium text-slate-700">Tenant Isolation Scope</span>
-              <Badge variant="success">BaseTenantRepository Verified</Badge>
+              <span>Multi-Tenant Boundaries</span>
+              <Badge variant="success">Tenant Scope Enforced</Badge>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <ShieldAlert className="w-5 h-5 text-amber-600" />
-              Connection Health & Diagnostics
+            <CardTitle className="text-base flex items-center gap-2">
+              <Boxes className="w-5 h-5 text-indigo-600" />
+              Stock Movement Ledger
             </CardTitle>
-            <CardDescription>
-              Dual health endpoints providing live readiness & database availability probes
-            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-slate-600">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <span className="font-medium text-slate-700">Service Probe</span>
-              <code className="text-xs bg-slate-100 px-2 py-0.5 rounded">GET /api/v1/health</code>
+            <div className="flex items-center justify-between border-b pb-2">
+              <span>Movement Types</span>
+              <span className="text-xs font-mono text-slate-600">OPENING, PURCHASE, SALE, RETURN</span>
             </div>
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <span className="font-medium text-slate-700">Database Probe</span>
-              <code className="text-xs bg-slate-100 px-2 py-0.5 rounded">GET /api/v1/health/db</code>
+            <div className="flex items-center justify-between border-b pb-2">
+              <span>Audit Guarantee</span>
+              <span className="text-xs text-emerald-600 font-semibold">Zero silent updates</span>
             </div>
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <span className="font-medium text-slate-700">Connection Pooling</span>
-              <span className="text-xs text-slate-500">MaxOpen: 25 | MaxIdle: 10</span>
+            <div className="flex items-center justify-between border-b pb-2">
+              <span>Concurrency Control</span>
+              <span className="text-xs text-slate-600">Row-level locking on adjustment</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="font-medium text-slate-700">Status Code Handling</span>
-              <span className="text-xs text-slate-500">200 OK / 503 Unavailable</span>
+              <span>Overselling Defense</span>
+              <span className="text-xs text-emerald-600 font-semibold">Validated deduction bounds</span>
             </div>
           </CardContent>
         </Card>
