@@ -33,7 +33,13 @@ export const DashboardPage: React.FC = () => {
     queryFn: apiService.getInventorySummary,
   })
 
+  const { data: analyticsResp } = useQuery({
+    queryKey: ['analytics-overview-dashboard'],
+    queryFn: () => apiService.getAnalyticsOverview({ range: '30d' }),
+  })
+
   const invSummary = inventoryResp?.data
+  const analytics = analyticsResp?.data
 
   return (
     <div className="space-y-6">
@@ -87,12 +93,16 @@ export const DashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">Total Gross Sales</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-600">30-Day Gross Revenue</CardTitle>
             <TrendingUp className="w-4 h-4 text-emerald-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900">₹0.00</div>
-            <p className="text-xs text-slate-500 mt-1">Ready for Phase 5 POS Import</p>
+            <div className="text-2xl font-bold text-slate-900 font-mono">
+              ₹{Number(analytics?.gross_sales || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+            </div>
+            <p className="text-xs text-slate-500 mt-1">
+              {analytics?.total_bills || 0} Bills • {Number(analytics?.profit_margin_pct || 0).toFixed(1)}% Est. Margin
+            </p>
           </CardContent>
         </Card>
 

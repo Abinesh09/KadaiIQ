@@ -40,16 +40,19 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, dbManager *database.DBManag
 		tenantRepo := repositories.NewTenantRepository(dbManager.DB)
 		productRepo := repositories.NewProductRepository(dbManager.DB)
 		saleRepo := repositories.NewSaleRepository(dbManager.DB)
+		analyticsRepo := repositories.NewAnalyticsRepository(dbManager.DB)
 
 		authService := services.NewAuthService(authRepo, tenantRepo, cfg)
 		tenantService := services.NewTenantService(tenantRepo, authRepo)
 		productService := services.NewProductService(productRepo)
 		saleService := services.NewSaleService(saleRepo, productRepo)
+		analyticsService := services.NewAnalyticsService(analyticsRepo)
 
 		authCtrl := controllers.NewAuthController(authService)
 		tenantCtrl := controllers.NewTenantController(tenantService)
 		productCtrl := controllers.NewProductController(productService)
 		saleCtrl := controllers.NewSaleController(saleService)
+		analyticsCtrl := controllers.NewAnalyticsController(analyticsService)
 
 		jwtAuth := middleware.JWTMiddleware(cfg.DatabaseURL)
 		tenantScope := middleware.RequireTenantContext()
@@ -104,5 +107,14 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, dbManager *database.DBManag
 		salesRoutes.Post("/preview", saleCtrl.PreviewImport)
 		salesRoutes.Post("/import", saleCtrl.ExecuteImport)
 		salesRoutes.Get("/:id", saleCtrl.GetSale)
+
+		// Analytics Routes (Tenant Scoped)
+		analyticsRoutes := api.Group("/analytics", jwtAuth, tenantScope)
+		analyticsRoutes.Get("/overview", analyticsCtrl.GetOverview)
+		analyticsRoutes.Get("/trends", analyticsCtrl.GetTrends)
+		analyticsRoutes.Get("/payment-methods", analyticsCtrl.GetPaymentMethods)
+		analyticsRoutes.Get("/products", analyticsCtrl.GetTopProducts)
+		analyticsRoutes.Get("/categories", analyticsCtrl.GetCategorySales)
+		analyticsRoutes.Get("/footwear", analyticsCtrl.GetFootwearIntelligence)
 	}
 }

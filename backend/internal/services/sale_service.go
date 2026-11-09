@@ -249,7 +249,7 @@ func (s *SaleService) ExecuteImport(
 		}
 
 		barcode := s.getCol(row, headerMap, "barcode", "item code", "code", "sku")
-		prodName := s.getCol(row, headerMap, "product", "item name", "name", "description")
+		prodName := s.getCol(row, headerMap, "product name", "product_name", "product", "item name", "item_name", "name", "description")
 		if prodName == "" {
 			prodName = "Retail Item"
 		}

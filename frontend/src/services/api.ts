@@ -203,6 +203,76 @@ export interface ImportJobData {
   created_at: string
 }
 
+// Analytics Types
+export interface AnalyticsOverviewData {
+  date_range: string
+  start_date: string
+  end_date: string
+  gross_sales: string | number
+  total_discounts: string | number
+  total_tax: string | number
+  net_sales: string | number
+  estimated_cost: string | number
+  gross_profit: string | number
+  profit_margin_pct: string | number
+  total_bills: number
+  total_items_sold: number
+  average_order_value: string | number
+  prev_gross_sales: string | number
+  prev_net_sales: string | number
+  prev_total_bills: number
+  sales_growth_pct: string | number
+  bills_growth_pct: string | number
+}
+
+export interface TrendPointData {
+  period: string
+  timestamp: string
+  sales: string | number
+  net_sales: string | number
+  profit: string | number
+  bills: number
+  units_sold: number
+}
+
+export interface PaymentMethodData {
+  method: string
+  total_sales: string | number
+  bill_count: number
+  percentage: string | number
+}
+
+export interface ProductSalesData {
+  product_id?: string
+  product_name: string
+  brand_name?: string
+  category_name?: string
+  units_sold: number
+  revenue: string | number
+  gross_profit: string | number
+}
+
+export interface CategorySalesData {
+  category_name: string
+  revenue: string | number
+  units_sold: number
+  percentage: string | number
+}
+
+export interface VariantAttributeData {
+  attribute_type: string
+  attribute_value: string
+  units_sold: number
+  revenue: string | number
+  percentage: string | number
+}
+
+export interface FootwearIntelligenceData {
+  top_sizes: VariantAttributeData[]
+  top_colours: VariantAttributeData[]
+  top_brands: VariantAttributeData[]
+}
+
 const BASE_URL = import.meta.env.VITE_API_URL || '/api/v1'
 
 const getHeaders = (isFormData = false): Record<string, string> => {
@@ -551,6 +621,92 @@ export const apiService = {
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.message || 'Failed to fetch import history')
+    return data
+  },
+
+  // Analytics Endpoints
+  async getAnalyticsOverview(params?: { range?: string; from?: string; to?: string }): Promise<ApiResponse<AnalyticsOverviewData>> {
+    const query = new URLSearchParams()
+    if (params?.range) query.set('range', params.range)
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+
+    const res = await fetch(`${BASE_URL}/analytics/overview?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch analytics overview')
+    return data
+  },
+
+  async getSalesTrends(params?: { range?: string; from?: string; to?: string }): Promise<ApiResponse<TrendPointData[]>> {
+    const query = new URLSearchParams()
+    if (params?.range) query.set('range', params.range)
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+
+    const res = await fetch(`${BASE_URL}/analytics/trends?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch sales trends')
+    return data
+  },
+
+  async getPaymentMethods(params?: { range?: string; from?: string; to?: string }): Promise<ApiResponse<PaymentMethodData[]>> {
+    const query = new URLSearchParams()
+    if (params?.range) query.set('range', params.range)
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+
+    const res = await fetch(`${BASE_URL}/analytics/payment-methods?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch payment methods')
+    return data
+  },
+
+  async getTopProducts(params?: { range?: string; from?: string; to?: string; limit?: number }): Promise<ApiResponse<ProductSalesData[]>> {
+    const query = new URLSearchParams()
+    if (params?.range) query.set('range', params.range)
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+    if (params?.limit) query.set('limit', params.limit.toString())
+
+    const res = await fetch(`${BASE_URL}/analytics/products?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch top products')
+    return data
+  },
+
+  async getCategorySales(params?: { range?: string; from?: string; to?: string }): Promise<ApiResponse<CategorySalesData[]>> {
+    const query = new URLSearchParams()
+    if (params?.range) query.set('range', params.range)
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+
+    const res = await fetch(`${BASE_URL}/analytics/categories?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch category sales')
+    return data
+  },
+
+  async getFootwearIntelligence(params?: { range?: string; from?: string; to?: string }): Promise<ApiResponse<FootwearIntelligenceData>> {
+    const query = new URLSearchParams()
+    if (params?.range) query.set('range', params.range)
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+
+    const res = await fetch(`${BASE_URL}/analytics/footwear?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch footwear intelligence')
     return data
   },
 }
