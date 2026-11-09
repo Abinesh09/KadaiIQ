@@ -32,9 +32,39 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const currentMeta = pageTitles[location.pathname] || {
+  let currentMeta = pageTitles[location.pathname] || {
     section: 'Workspace',
     title: 'KadaiIQ Platform',
+  }
+
+  const searchParams = new URLSearchParams(location.search)
+  if (location.pathname === '/analytics') {
+    const tab = searchParams.get('tab')
+    if (tab === 'products') {
+      currentMeta = { section: 'Business Intelligence', title: 'Product Performance' }
+    } else if (tab === 'footwear') {
+      currentMeta = { section: 'Business Intelligence', title: 'Category & Brand Analytics' }
+    } else if (tab === 'daily') {
+      currentMeta = { section: 'Business Intelligence', title: 'Daily Breakdown' }
+    } else if (tab === 'monthly') {
+      currentMeta = { section: 'Business Intelligence', title: 'Monthly Breakdown' }
+    } else if (tab === 'yearly') {
+      currentMeta = { section: 'Business Intelligence', title: 'Yearly Summary' }
+    } else if (tab === 'payments') {
+      currentMeta = { section: 'Business Intelligence', title: 'Payment Tenders' }
+    }
+  } else if (location.pathname === '/sales') {
+    const tab = searchParams.get('tab')
+    if (tab === 'imports') {
+      currentMeta = { section: 'Retail Operations', title: 'Import Ledger' }
+    }
+  } else if (location.pathname === '/reports') {
+    const type = searchParams.get('type')
+    if (type === 'inventory') {
+      currentMeta = { section: 'Financial', title: 'Inventory Valuation' }
+    } else if (type === 'movements') {
+      currentMeta = { section: 'Financial', title: 'Stock Movement Audit' }
+    }
   }
 
   const handleLogout = async () => {

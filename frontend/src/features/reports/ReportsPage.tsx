@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import {
   apiService,
@@ -9,6 +10,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 import {
   Download,
   Calendar,
@@ -20,7 +22,22 @@ import {
 } from 'lucide-react'
 
 export const ReportsPage: React.FC = () => {
-  const [reportType, setReportType] = useState<'sales' | 'inventory' | 'movements'>('sales')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const rawType = searchParams.get('type')
+  const reportType: 'sales' | 'inventory' | 'movements' =
+    rawType === 'inventory' ? 'inventory' : rawType === 'movements' ? 'movements' : 'sales'
+
+  const handleTypeChange = (newType: 'sales' | 'inventory' | 'movements') => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (newType === 'sales') {
+        next.delete('type')
+      } else {
+        next.set('type', newType)
+      }
+      return next
+    }, { replace: true })
+  }
 
   // Date filters
   const [dateFrom, setDateFrom] = useState('')
@@ -145,61 +162,67 @@ export const ReportsPage: React.FC = () => {
       {/* Report Cards Selector */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <button
-          onClick={() => setReportType('sales')}
-          className={`p-5 rounded-xl border text-left transition-all ${
+          type="button"
+          onClick={() => handleTypeChange('sales')}
+          className={cn(
+            'p-5 rounded-xl border text-left transition-all cursor-pointer',
             reportType === 'sales'
-              ? 'border-emerald-600 bg-emerald-50/50 shadow-sm'
-              : 'border-slate-200 bg-white hover:border-slate-300'
-          }`}
+              ? 'border-[#16A36A] bg-emerald-50/40 shadow-xs ring-1 ring-[#16A36A]/20'
+              : 'border-[#E5EAF0] bg-white hover:border-slate-300'
+          )}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Invoices & Sales</span>
-            <div className={`p-2 rounded-lg ${reportType === 'sales' ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600'}`}>
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">Invoices & Sales</span>
+            <div className={cn('p-2 rounded-lg', reportType === 'sales' ? 'bg-[#16A36A] text-white' : 'bg-[#F5F7FA] text-[#64748B]')}>
               <Receipt className="w-5 h-5" />
             </div>
           </div>
-          <h3 className="text-base font-bold text-slate-900 mt-2">Sales Ledger Report</h3>
-          <p className="text-xs text-slate-500 mt-1">
+          <h3 className="text-base font-bold text-[#172033] mt-2">Sales Ledger Report</h3>
+          <p className="text-xs text-[#64748B] mt-1">
             Bill numbers, payment tenders, discounts, GST tax, and grand totals.
           </p>
         </button>
 
         <button
-          onClick={() => setReportType('inventory')}
-          className={`p-5 rounded-xl border text-left transition-all ${
+          type="button"
+          onClick={() => handleTypeChange('inventory')}
+          className={cn(
+            'p-5 rounded-xl border text-left transition-all cursor-pointer',
             reportType === 'inventory'
-              ? 'border-blue-600 bg-blue-50/50 shadow-sm'
-              : 'border-slate-200 bg-white hover:border-slate-300'
-          }`}
+              ? 'border-[#172B4D] bg-slate-50 shadow-xs ring-1 ring-[#172B4D]/20'
+              : 'border-[#E5EAF0] bg-white hover:border-slate-300'
+          )}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Stock & Valuation</span>
-            <div className={`p-2 rounded-lg ${reportType === 'inventory' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'}`}>
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">Stock & Valuation</span>
+            <div className={cn('p-2 rounded-lg', reportType === 'inventory' ? 'bg-[#172B4D] text-white' : 'bg-[#F5F7FA] text-[#64748B]')}>
               <Boxes className="w-5 h-5" />
             </div>
           </div>
-          <h3 className="text-base font-bold text-slate-900 mt-2">Footwear Valuation Report</h3>
-          <p className="text-xs text-slate-500 mt-1">
+          <h3 className="text-base font-bold text-[#172033] mt-2">Footwear Valuation Report</h3>
+          <p className="text-xs text-[#64748B] mt-1">
             Current stock quantities, purchase cost, selling price, and stock valuation.
           </p>
         </button>
 
         <button
-          onClick={() => setReportType('movements')}
-          className={`p-5 rounded-xl border text-left transition-all ${
+          type="button"
+          onClick={() => handleTypeChange('movements')}
+          className={cn(
+            'p-5 rounded-xl border text-left transition-all cursor-pointer',
             reportType === 'movements'
-              ? 'border-violet-600 bg-violet-50/50 shadow-sm'
-              : 'border-slate-200 bg-white hover:border-slate-300'
-          }`}
+              ? 'border-indigo-600 bg-indigo-50/40 shadow-xs ring-1 ring-indigo-600/20'
+              : 'border-[#E5EAF0] bg-white hover:border-slate-300'
+          )}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Audit Trail</span>
-            <div className={`p-2 rounded-lg ${reportType === 'movements' ? 'bg-violet-600 text-white' : 'bg-slate-100 text-slate-600'}`}>
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">Audit Trail</span>
+            <div className={cn('p-2 rounded-lg', reportType === 'movements' ? 'bg-indigo-600 text-white' : 'bg-[#F5F7FA] text-[#64748B]')}>
               <ArrowRightLeft className="w-5 h-5" />
             </div>
           </div>
-          <h3 className="text-base font-bold text-slate-900 mt-2">Stock Movement Audit</h3>
-          <p className="text-xs text-slate-500 mt-1">
+          <h3 className="text-base font-bold text-[#172033] mt-2">Stock Movement Audit</h3>
+          <p className="text-xs text-[#64748B] mt-1">
             Full audit log of adjustments, POS sales deductions, and restocks.
           </p>
         </button>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import {
   apiService,
@@ -15,6 +16,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 import {
   TrendingUp,
   Receipt,
@@ -52,11 +54,25 @@ import {
 const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899']
 
 export const AnalyticsPage: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [dateRange, setDateRange] = useState<string>('this_month')
   const [dateFrom, setDateFrom] = useState<string>('')
   const [dateTo, setDateTo] = useState<string>('')
   const [isExporting, setIsExporting] = useState<boolean>(false)
-  const [activeTab, setActiveTab] = useState<'trends' | 'daily' | 'monthly' | 'yearly' | 'products' | 'footwear' | 'payments'>('trends')
+
+  type TabType = 'trends' | 'daily' | 'monthly' | 'yearly' | 'products' | 'footwear' | 'payments'
+  const validTabs: TabType[] = ['trends', 'daily', 'monthly', 'yearly', 'products', 'footwear', 'payments']
+  const rawTab = searchParams.get('tab') as TabType
+  const activeTab: TabType = validTabs.includes(rawTab) ? rawTab : 'trends'
+
+  const handleTabChange = (newTab: TabType) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      next.set('tab', newTab)
+      return next
+    }, { replace: true })
+  }
+
   const [productSubTab, setProductSubTab] = useState<'top' | 'slow' | 'zero'>('top')
   const [productSearch, setProductSearch] = useState<string>('')
 
@@ -446,34 +462,38 @@ export const AnalyticsPage: React.FC = () => {
         </Card>
       </div>
 
-      {/* Main Analytics Tabs Bar */}
-      <div className="flex border-b border-slate-200 gap-2 overflow-x-auto pb-1">
-        {[
-          { id: 'trends', label: 'Sales Trends', icon: TrendingUp },
-          { id: 'daily', label: 'Daily Breakdown', icon: CalendarDays },
-          { id: 'monthly', label: 'Monthly Breakdown', icon: Calendar },
-          { id: 'yearly', label: 'Yearly Summary', icon: Calendar },
-          { id: 'products', label: 'Product Intelligence', icon: ShoppingBag },
-          { id: 'footwear', label: 'Footwear Matrix', icon: Layers },
-          { id: 'payments', label: 'Payment Tenders', icon: CreditCard },
-        ].map((tab) => {
-          const Icon = tab.icon
-          const isActive = activeTab === tab.id
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`pb-3 px-3 text-xs sm:text-sm font-medium transition-colors border-b-2 flex items-center gap-1.5 whitespace-nowrap ${
-                isActive
-                  ? 'border-emerald-600 text-emerald-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              {tab.label}
-            </button>
-          )
-        })}
+      {/* Main Analytics Tabs Bar (Single-Selection Segmented Control) */}
+      <div className="bg-[#F5F7FA] p-1.5 rounded-xl border border-[#E5EAF0] overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-1 min-w-max">
+          {[
+            { id: 'trends', label: 'Sales Trajectory', icon: TrendingUp },
+            { id: 'daily', label: 'Daily Breakdown', icon: CalendarDays },
+            { id: 'monthly', label: 'Monthly Breakdown', icon: Calendar },
+            { id: 'yearly', label: 'Yearly Summary', icon: Calendar },
+            { id: 'products', label: 'Product Performance', icon: Award },
+            { id: 'footwear', label: 'Category & Matrix', icon: Layers },
+            { id: 'payments', label: 'Payment Tenders', icon: CreditCard },
+          ].map((tab) => {
+            const Icon = tab.icon
+            const isActive = activeTab === tab.id
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => handleTabChange(tab.id as TabType)}
+                className={cn(
+                  'flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap',
+                  isActive
+                    ? 'bg-white text-[#172B4D] shadow-xs border border-[#E5EAF0]'
+                    : 'text-[#64748B] hover:text-[#172033] hover:bg-white/60 border border-transparent'
+                )}
+              >
+                <Icon className={cn('w-3.5 h-3.5 shrink-0', isActive ? 'text-[#16A36A]' : 'text-[#64748B]')} />
+                <span>{tab.label}</span>
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {/* TAB 1: Sales Trends Chart */}

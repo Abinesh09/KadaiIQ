@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { cn } from '@/lib/utils'
 import {
   apiService,
   type SaleData,
@@ -26,9 +28,22 @@ import {
 
 export const SalesPage: React.FC = () => {
   const queryClient = useQueryClient()
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  // Tab State: 'bills' | 'imports'
-  const [activeTab, setActiveTab] = useState<'bills' | 'imports'>('bills')
+  // Tab State: 'bills' | 'imports' (synchronized with URL query)
+  const activeTab = searchParams.get('tab') === 'imports' ? 'imports' : 'bills'
+
+  const handleTabChange = (newTab: 'bills' | 'imports') => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (newTab === 'bills') {
+        next.delete('tab')
+      } else {
+        next.set('tab', newTab)
+      }
+      return next
+    }, { replace: true })
+  }
 
   // Search & Filters
   const [search, setSearch] = useState('')
@@ -242,27 +257,39 @@ export const SalesPage: React.FC = () => {
         </Card>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="flex border-b border-slate-200 gap-4">
+      {/* Navigation Tabs (Single-Selection Segmented Control) */}
+      <div className="bg-[#F5F7FA] p-1.5 rounded-xl border border-[#E5EAF0] inline-flex items-center gap-1">
         <button
-          onClick={() => setActiveTab('bills')}
-          className={`pb-3 text-sm font-medium transition-colors border-b-2 ${
+          type="button"
+          onClick={() => handleTabChange('bills')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap',
             activeTab === 'bills'
-              ? 'border-emerald-600 text-emerald-600'
-              : 'border-transparent text-slate-500 hover:text-slate-700'
-          }`}
+              ? 'bg-white text-[#172B4D] shadow-xs border border-[#E5EAF0]'
+              : 'text-[#64748B] hover:text-[#172033] hover:bg-white/60 border border-transparent'
+          )}
         >
-          Sales Ledger ({totalBillsCount})
+          <Receipt className={cn('w-3.5 h-3.5', activeTab === 'bills' ? 'text-[#16A36A]' : 'text-[#64748B]')} />
+          <span>Sales & Bills Ledger</span>
+          <span className="ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F5F7FA] text-[#64748B]">
+            {totalBillsCount}
+          </span>
         </button>
         <button
-          onClick={() => setActiveTab('imports')}
-          className={`pb-3 text-sm font-medium transition-colors border-b-2 ${
+          type="button"
+          onClick={() => handleTabChange('imports')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap',
             activeTab === 'imports'
-              ? 'border-emerald-600 text-emerald-600'
-              : 'border-transparent text-slate-500 hover:text-slate-700'
-          }`}
+              ? 'bg-white text-[#172B4D] shadow-xs border border-[#E5EAF0]'
+              : 'text-[#64748B] hover:text-[#172033] hover:bg-white/60 border border-transparent'
+          )}
         >
-          Import History & Logs ({history.length})
+          <UploadCloud className={cn('w-3.5 h-3.5', activeTab === 'imports' ? 'text-[#16A36A]' : 'text-[#64748B]')} />
+          <span>Import Ledger & Logs</span>
+          <span className="ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F5F7FA] text-[#64748B]">
+            {history.length}
+          </span>
         </button>
       </div>
 

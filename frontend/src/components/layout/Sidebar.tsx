@@ -45,24 +45,24 @@ const navSections: NavSection[] = [
     items: [
       { label: 'Products', path: '/products', icon: Package },
       { label: 'Inventory', path: '/inventory', icon: Boxes },
-      { label: 'Sales', path: '/sales', icon: ShoppingCart },
-      { label: 'Transactions', path: '/sales', icon: Receipt },
+      { label: 'Sales & POS', path: '/sales', icon: ShoppingCart },
+      { label: 'Import Ledger', path: '/sales?tab=imports', icon: Receipt },
     ],
   },
   {
     title: 'BUSINESS INTELLIGENCE',
     items: [
-      { label: 'Sales Analytics', path: '/analytics', icon: TrendingUp },
-      { label: 'Product Performance', path: '/analytics', icon: Award },
-      { label: 'Category & Brand Analytics', path: '/analytics', icon: PieChart },
+      { label: 'Sales Analytics', path: '/analytics?tab=trends', icon: TrendingUp },
+      { label: 'Product Performance', path: '/analytics?tab=products', icon: Award },
+      { label: 'Category & Brand Analytics', path: '/analytics?tab=footwear', icon: PieChart },
     ],
   },
   {
     title: 'FINANCIAL',
     items: [
-      { label: 'Reports', path: '/reports', icon: FileSpreadsheet },
+      { label: 'Reports', path: '/reports?type=sales', icon: FileSpreadsheet },
       { label: 'GST Reports', path: '/gst', icon: Percent },
-      { label: 'Exports', path: '/reports', icon: DownloadCloud },
+      { label: 'Inventory Valuation', path: '/reports?type=inventory', icon: DownloadCloud },
     ],
   },
   {
@@ -83,6 +83,62 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
   const location = useLocation()
   const { isSuperAdmin, activeTenant } = useAuth()
 
+  // Strict route matching function ensuring only ONE sidebar item is active
+  const isItemActive = (itemPath: string): boolean => {
+    const [targetPath, targetQuery] = itemPath.split('?')
+    const currentPath = location.pathname
+
+    // 1. Root dashboard match
+    if (targetPath === '/') {
+      return currentPath === '/'
+    }
+
+    // 2. Base path must match
+    if (currentPath !== targetPath) {
+      return false
+    }
+
+    // 3. For routes with query params (?tab=... or ?type=...)
+    const currentParams = new URLSearchParams(location.search)
+
+    if (targetQuery) {
+      const targetParams = new URLSearchParams(targetQuery)
+      for (const [key, val] of targetParams.entries()) {
+        const curVal = currentParams.get(key)
+        if (curVal !== val) {
+          // Allow default fallbacks when parameter is omitted from URL
+          if (key === 'tab' && val === 'trends' && !curVal) {
+            continue
+          }
+          if (key === 'type' && val === 'sales' && !curVal) {
+            continue
+          }
+          return false
+        }
+      }
+      return true
+    }
+
+    // 4. For base routes where siblings have query params (e.g. /sales vs /sales?tab=imports):
+    // Active only when no matching sibling query param is set
+    if (targetPath === '/sales') {
+      const tab = currentParams.get('tab')
+      return !tab || tab === 'bills'
+    }
+
+    if (targetPath === '/analytics') {
+      const tab = currentParams.get('tab')
+      return !tab || tab === 'trends'
+    }
+
+    if (targetPath === '/reports') {
+      const type = currentParams.get('type')
+      return !type || type === 'sales'
+    }
+
+    return true
+  }
+
   return (
     <>
       {/* Mobile Backdrop Overlay */}
@@ -102,7 +158,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
         )}
       >
         {/* Brand Header */}
-        <div className="h-16 flex items-center justify-between px-5 border-b border-[#E5EAF0] bg-white">
+        <div className="h-14 flex items-center justify-between px-5 border-b border-[#E5EAF0] bg-white">
           <Link to="/" className="flex items-center gap-2.5 group" onClick={onClose}>
             <div className="w-8 h-8 rounded-lg bg-[#172B4D] text-white flex items-center justify-center font-bold text-sm shadow-2xs group-hover:bg-[#243B5A] transition-colors">
               <span className="font-mono text-[#16A36A] font-extrabold mr-0.5">K</span>
@@ -129,7 +185,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
           )}
         </div>
 
-        {/* Current Active Tenant Card */}
+        {/* Current Active Tenant Mini-Card */}
         <div className="px-3.5 pt-3 pb-1">
           <div className="bg-[#F5F7FA] border border-[#E5EAF0] rounded-lg p-2.5 flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-md bg-[#172B4D] text-white flex items-center justify-center shrink-0">
@@ -155,7 +211,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
               </div>
               {section.items.map((item) => {
                 const Icon = item.icon
-                const isActive = location.pathname === item.path
+                const active = isItemActive(item.path)
                 return (
                   <Link
                     key={`${section.title}-${item.label}`}
@@ -163,7 +219,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
                     onClick={onClose}
                     className={cn(
                       'group flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors',
-                      isActive
+                      active
                         ? 'bg-[#172B4D] text-white font-semibold shadow-2xs'
                         : 'text-[#64748B] hover:bg-[#F5F7FA] hover:text-[#172033]'
                     )}
@@ -172,7 +228,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
                       <Icon
                         className={cn(
                           'w-4 h-4 transition-colors shrink-0',
-                          isActive ? 'text-[#16A36A]' : 'text-[#64748B] group-hover:text-[#172033]'
+                          active ? 'text-[#16A36A]' : 'text-[#64748B] group-hover:text-[#172033]'
                         )}
                       />
                       <span className="truncate">{item.label}</span>
@@ -194,7 +250,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
                 onClick={onClose}
                 className={cn(
                   'group flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors',
-                  location.pathname === '/super-admin'
+                  isItemActive('/super-admin')
                     ? 'bg-[#172B4D] text-white font-semibold'
                     : 'text-[#64748B] hover:bg-[#F5F7FA] hover:text-[#172033]'
                 )}
@@ -203,7 +259,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
                   <ShieldCheck
                     className={cn(
                       'w-4 h-4 transition-colors shrink-0',
-                      location.pathname === '/super-admin' ? 'text-[#16A36A]' : 'text-[#64748B]'
+                      isItemActive('/super-admin') ? 'text-[#16A36A]' : 'text-[#64748B]'
                     )}
                   />
                   <span className="truncate">Super Admin</span>
