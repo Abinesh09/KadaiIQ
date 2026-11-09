@@ -31,9 +31,22 @@ export const ForgotPasswordPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
-        <Card>
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md space-y-6">
+        <div className="flex flex-col items-center text-center">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-slate-900 via-blue-900 to-indigo-700 flex items-center justify-center text-white shadow-md ring-1 ring-blue-500/20 mb-3">
+            <span className="font-mono text-emerald-400 font-extrabold text-xl mr-0.5">K</span>
+            <span className="text-white text-xs font-bold">IQ</span>
+          </div>
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            Reset Password
+          </h1>
+          <p className="mt-1 text-xs text-slate-500">
+            Generate a secure, single-use reset token for your account
+          </p>
+        </div>
+
+        <Card className="rounded-2xl border-slate-200/90 shadow-md">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <KeyRound className="w-5 h-5 text-blue-600" />

@@ -79,25 +79,75 @@ export const SuperAdminPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Top Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6 text-purple-600" />
-            Super Admin Portal
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            Super Admin Console
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Global organisation provisioning, tenant management, and platform telemetry
           </p>
         </div>
 
-        <Button onClick={() => setShowCreateModal(true)} className="bg-purple-600 hover:bg-purple-700">
+        <Button
+          onClick={() => setShowCreateModal(true)}
+          className="bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow-sm cursor-pointer"
+        >
           <Plus className="w-4 h-4 mr-2" />
           Provision New Organisation
         </Button>
       </div>
 
+      {/* Super Admin Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card className="rounded-2xl border-slate-200/90 shadow-2xs">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              Total Organisations
+            </span>
+            <Building2 className="w-4 h-4 text-purple-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-black text-slate-900 font-numeric">{tenants.length}</div>
+            <p className="text-[11px] text-slate-500 mt-1">Provisioned retail workspaces</p>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl border-slate-200/90 shadow-2xs">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              Active Tenants
+            </span>
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-black text-emerald-600 font-numeric">
+              {tenants.filter((t) => t.status === 'active').length}
+            </div>
+            <p className="text-[11px] text-slate-500 mt-1">Operating normally</p>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl border-slate-200/90 shadow-2xs">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              Platform Architecture
+            </span>
+            <ShieldCheck className="w-4 h-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-sm font-bold text-slate-900 mt-1">Shared Schema Isolation</div>
+            <p className="text-[11px] text-slate-500 mt-1">PostgreSQL row-level tenant keys</p>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Tenants Table */}
-      <Card>
+      <Card className="rounded-2xl border-slate-200/90 shadow-xs">
         <CardHeader>
           <CardTitle className="text-base flex items-center justify-between">
             <span>Managed Retail Tenants ({tenants.length})</span>

@@ -48,55 +48,56 @@ export const RegisterTenantPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 py-12">
       <div className="w-full max-w-lg space-y-6">
         <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-xl bg-blue-600 text-white items-center justify-center font-bold text-2xl shadow-md">
-            K
+          <div className="inline-flex w-12 h-12 rounded-2xl bg-gradient-to-tr from-slate-900 via-blue-900 to-indigo-700 text-white items-center justify-center shadow-md ring-1 ring-blue-500/20">
+            <span className="font-mono text-emerald-400 font-extrabold text-xl mr-0.5">K</span>
+            <span className="text-white text-xs font-bold">IQ</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Onboard Retail Organisation</h1>
-          <p className="text-sm text-slate-500">Create your tenant workspace with isolated database scope</p>
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">Onboard Retail Organisation</h1>
+          <p className="text-xs sm:text-sm text-slate-500">Create your tenant workspace with isolated database scope</p>
         </div>
 
-        <Card>
+        <Card className="rounded-2xl border-slate-200/90 shadow-md">
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
+            <CardTitle className="text-base font-bold flex items-center gap-2">
               <Building2 className="w-5 h-5 text-blue-600" />
               Store & Owner Information
             </CardTitle>
-            <CardDescription>All fields are required to setup tenant isolation</CardDescription>
+            <CardDescription className="text-xs">All fields are required to setup tenant isolation</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
                   <span>{error}</span>
                 </div>
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700">Business / Store Name</label>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Business / Store Name</label>
                   <input
                     type="text"
                     required
                     value={form.organization_name}
                     onChange={(e) => handleNameChange(e.target.value)}
                     placeholder="e.g. Royal Footwear"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700">Tenant Slug (Identifier)</label>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Tenant Slug (Identifier)</label>
                   <input
                     type="text"
                     required
                     value={form.slug}
                     onChange={(e) => setForm({ ...form, slug: e.target.value })}
                     placeholder="royal-footwear"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all font-mono"
                   />
                 </div>
               </div>

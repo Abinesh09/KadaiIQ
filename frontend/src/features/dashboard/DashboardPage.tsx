@@ -229,43 +229,43 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* 3. Core Retail Performance Grid (4 Hero KPI Cards) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* KPI 1: Total Sales Amount */}
-        <Card className="card-hover border-slate-200/90 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full -mr-6 -mt-6 pointer-events-none" />
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <Card className="card-hover border-slate-200/90 rounded-2xl relative overflow-hidden bg-white shadow-xs">
+          <div className="absolute top-0 right-0 w-28 h-28 bg-blue-500/5 rounded-full -mr-8 -mt-8 pointer-events-none" />
+          <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
               Total Sales Amount
             </span>
-            <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-xs">
-              <TrendingUp className="w-4 h-4" />
+            <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-xs">
+              <TrendingUp className="w-5 h-5" />
             </div>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-numeric tracking-tight">
+          <CardContent className="space-y-3">
+            <div className="text-3xl sm:text-4xl font-black text-slate-950 font-numeric tracking-tight">
               {isPerfLoading ? (
-                <div className="h-8 bg-slate-100 animate-pulse rounded-md w-3/4" />
+                <div className="h-9 bg-slate-100 animate-pulse rounded-md w-3/4" />
               ) : (
                 `₹${Number(perf?.gross_sales || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`
               )}
             </div>
 
-            <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
-              <div className="flex items-center gap-1 font-semibold">
+            <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
+              <div className="flex items-center gap-1.5 font-bold">
                 {salesGrowth >= 0 ? (
-                  <span className="text-emerald-600 flex items-center">
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full ring-1 ring-emerald-200/60 flex items-center">
+                    <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" />
                     +{salesGrowth}%
                   </span>
                 ) : (
-                  <span className="text-rose-600 flex items-center">
-                    <ArrowDownRight className="w-3.5 h-3.5" />
+                  <span className="text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full ring-1 ring-rose-200/60 flex items-center">
+                    <ArrowDownRight className="w-3.5 h-3.5 mr-0.5" />
                     {salesGrowth}%
                   </span>
                 )}
-                <span className="text-slate-400 font-normal text-[11px]">vs prior</span>
+                <span className="text-slate-400 font-medium text-[11px]">vs prior</span>
               </div>
-              <span className="text-[11px] text-slate-500 font-medium">
+              <span className="text-[11px] text-slate-500 font-bold">
                 Net: ₹{Number(perf?.net_sales || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
               </span>
             </div>
@@ -273,141 +273,141 @@ export const DashboardPage: React.FC = () => {
         </Card>
 
         {/* KPI 2: Products Sold */}
-        <Card className="card-hover border-slate-200/90 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full -mr-6 -mt-6 pointer-events-none" />
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <Card className="card-hover border-slate-200/90 rounded-2xl relative overflow-hidden bg-white shadow-xs">
+          <div className="absolute top-0 right-0 w-28 h-28 bg-indigo-500/5 rounded-full -mr-8 -mt-8 pointer-events-none" />
+          <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
               Products Sold
             </span>
-            <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-xs">
-              <ShoppingBag className="w-4 h-4" />
+            <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-xs">
+              <ShoppingBag className="w-5 h-5" />
             </div>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-numeric tracking-tight">
+          <CardContent className="space-y-3">
+            <div className="text-3xl sm:text-4xl font-black text-slate-950 font-numeric tracking-tight">
               {isPerfLoading ? (
-                <div className="h-8 bg-slate-100 animate-pulse rounded-md w-1/2" />
+                <div className="h-9 bg-slate-100 animate-pulse rounded-md w-1/2" />
               ) : (
                 `${Number(perf?.total_units_sold || 0).toLocaleString('en-IN')} units`
               )}
             </div>
 
-            <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
-              <span className="text-slate-500 text-[11px]">Variant units moved</span>
-              <span className="text-indigo-600 font-semibold text-[11px]">Retail POS</span>
+            <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
+              <span className="text-slate-500 text-[11px] font-medium">Variant units moved</span>
+              <span className="text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full font-bold text-[10px]">POS Verified</span>
             </div>
           </CardContent>
         </Card>
 
         {/* KPI 3: Completed Bills */}
-        <Card className="card-hover border-slate-200/90 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full -mr-6 -mt-6 pointer-events-none" />
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <Card className="card-hover border-slate-200/90 rounded-2xl relative overflow-hidden bg-white shadow-xs">
+          <div className="absolute top-0 right-0 w-28 h-28 bg-emerald-500/5 rounded-full -mr-8 -mt-8 pointer-events-none" />
+          <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
               Completed Bills
             </span>
-            <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs">
-              <Receipt className="w-4 h-4" />
+            <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs">
+              <Receipt className="w-5 h-5" />
             </div>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-numeric tracking-tight">
+          <CardContent className="space-y-3">
+            <div className="text-3xl sm:text-4xl font-black text-slate-950 font-numeric tracking-tight">
               {isPerfLoading ? (
-                <div className="h-8 bg-slate-100 animate-pulse rounded-md w-1/2" />
+                <div className="h-9 bg-slate-100 animate-pulse rounded-md w-1/2" />
               ) : (
                 `${Number(perf?.total_bills || 0).toLocaleString('en-IN')} bills`
               )}
             </div>
 
-            <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
-              <span className="text-slate-500 text-[11px]">Invoices settled</span>
-              <span className="text-emerald-600 font-semibold text-[11px]">100% Tax Finalized</span>
+            <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
+              <span className="text-slate-500 text-[11px] font-medium">Invoices finalized</span>
+              <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold text-[10px]">100% Tax Compliant</span>
             </div>
           </CardContent>
         </Card>
 
         {/* KPI 4: Average Bill Value */}
-        <Card className="card-hover border-slate-200/90 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full -mr-6 -mt-6 pointer-events-none" />
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <Card className="card-hover border-slate-200/90 rounded-2xl relative overflow-hidden bg-white shadow-xs">
+          <div className="absolute top-0 right-0 w-28 h-28 bg-amber-500/5 rounded-full -mr-8 -mt-8 pointer-events-none" />
+          <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
               Average Bill Value
             </span>
-            <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shadow-xs">
-              <CreditCard className="w-4 h-4" />
+            <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shadow-xs">
+              <CreditCard className="w-5 h-5" />
             </div>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-numeric tracking-tight">
+          <CardContent className="space-y-3">
+            <div className="text-3xl sm:text-4xl font-black text-slate-950 font-numeric tracking-tight">
               {isPerfLoading ? (
-                <div className="h-8 bg-slate-100 animate-pulse rounded-md w-3/4" />
+                <div className="h-9 bg-slate-100 animate-pulse rounded-md w-3/4" />
               ) : (
                 `₹${Number(perf?.average_bill_value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`
               )}
             </div>
 
-            <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
-              <span className="text-slate-500 text-[11px]">Ticket revenue</span>
-              <span className="text-amber-700 font-semibold text-[11px]">Per customer</span>
+            <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
+              <span className="text-slate-500 text-[11px] font-medium">Ticket size</span>
+              <span className="text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full font-bold text-[10px]">Per Customer</span>
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* 4. Financial Health & Margins Ribbon */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {/* Net Realized Sales */}
-        <div className="flex items-center justify-between p-4 rounded-xl bg-emerald-50/50 border border-emerald-200/70 shadow-xs">
+        <div className="flex items-center justify-between p-5 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 shadow-2xs">
           <div>
-            <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">
+            <span className="text-[11px] font-black text-emerald-800 uppercase tracking-widest block">
               Net Realized Sales
             </span>
-            <div className="text-xl font-extrabold text-emerald-950 font-numeric mt-0.5">
+            <div className="text-2xl font-black text-emerald-950 font-numeric mt-1">
               ₹{Number(perf?.net_sales || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
             </div>
-            <p className="text-[11px] text-emerald-700 mt-0.5">After deductions & verified returns</p>
+            <p className="text-[11px] font-medium text-emerald-700 mt-0.5">Deducted returns & bill discounts</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
-            <DollarSign className="w-5 h-5" />
+          <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shadow-2xs">
+            <DollarSign className="w-6 h-6" />
           </div>
         </div>
 
         {/* Gross Profit & Margin */}
-        <div className="flex items-center justify-between p-4 rounded-xl bg-blue-50/50 border border-blue-200/70 shadow-xs">
+        <div className="flex items-center justify-between p-5 rounded-2xl bg-blue-50/60 border border-blue-200/80 shadow-2xs">
           <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-bold text-blue-800 uppercase tracking-wider">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-black text-blue-800 uppercase tracking-widest">
                 Gross Profit
               </span>
-              <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-blue-600 text-white">
+              <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-600 text-white">
                 {Number(perf?.profit_margin_pct || 0).toFixed(1)}% Margin
               </span>
             </div>
-            <div className="text-xl font-extrabold text-blue-950 font-numeric mt-0.5">
+            <div className="text-2xl font-black text-blue-950 font-numeric mt-1">
               ₹{Number(perf?.gross_profit || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
             </div>
-            <p className="text-[11px] text-blue-700 mt-0.5">
-              COGS: ₹{Number(perf?.cogs || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+            <p className="text-[11px] font-medium text-blue-700 mt-0.5">
+              Cost of Goods: ₹{Number(perf?.cogs || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
-            <Percent className="w-5 h-5" />
+          <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center shadow-2xs">
+            <Percent className="w-6 h-6" />
           </div>
         </div>
 
         {/* Average Daily Velocity */}
-        <div className="flex items-center justify-between p-4 rounded-xl bg-indigo-50/50 border border-indigo-200/70 shadow-xs">
+        <div className="flex items-center justify-between p-5 rounded-2xl bg-indigo-50/60 border border-indigo-200/80 shadow-2xs">
           <div>
-            <span className="text-[11px] font-bold text-indigo-800 uppercase tracking-wider block">
+            <span className="text-[11px] font-black text-indigo-800 uppercase tracking-widest block">
               Daily Sales Velocity
             </span>
-            <div className="text-xl font-extrabold text-indigo-950 font-numeric mt-0.5">
+            <div className="text-2xl font-black text-indigo-950 font-numeric mt-1">
               ₹{Number(perf?.average_daily_sales || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
             </div>
-            <p className="text-[11px] text-indigo-700 mt-0.5">Prorated daily revenue trajectory</p>
+            <p className="text-[11px] font-medium text-indigo-700 mt-0.5">Prorated daily revenue velocity</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
-            <Calendar className="w-5 h-5" />
+          <div className="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center shadow-2xs">
+            <Calendar className="w-6 h-6" />
           </div>
         </div>
       </div>
