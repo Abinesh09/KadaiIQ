@@ -34,19 +34,22 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, dbManager *database.DBManag
 	api.Get("/health", healthController.Check)
 	api.Get("/health/db", healthController.CheckDB)
 
-	// If DB is initialized, mount Auth, Tenant, Product, and Inventory routes
+	// If DB is initialized, mount Auth, Tenant, Product, Inventory, and Sales routes
 	if dbManager != nil && dbManager.DB != nil {
 		authRepo := repositories.NewAuthRepository(dbManager.DB)
 		tenantRepo := repositories.NewTenantRepository(dbManager.DB)
 		productRepo := repositories.NewProductRepository(dbManager.DB)
+		saleRepo := repositories.NewSaleRepository(dbManager.DB)
 
 		authService := services.NewAuthService(authRepo, tenantRepo, cfg)
 		tenantService := services.NewTenantService(tenantRepo, authRepo)
 		productService := services.NewProductService(productRepo)
+		saleService := services.NewSaleService(saleRepo, productRepo)
 
 		authCtrl := controllers.NewAuthController(authService)
 		tenantCtrl := controllers.NewTenantController(tenantService)
 		productCtrl := controllers.NewProductController(productService)
+		saleCtrl := controllers.NewSaleController(saleService)
 
 		jwtAuth := middleware.JWTMiddleware(cfg.DatabaseURL)
 		tenantScope := middleware.RequireTenantContext()
@@ -93,5 +96,13 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, dbManager *database.DBManag
 		invRoutes.Get("/summary", productCtrl.GetInventorySummary)
 		invRoutes.Get("/movements", productCtrl.GetStockMovements)
 		invRoutes.Post("/adjustments", productCtrl.RecordStockAdjustment)
+
+		// Sales & POS Data Import Routes (Tenant Scoped)
+		salesRoutes := api.Group("/sales", jwtAuth, tenantScope)
+		salesRoutes.Get("/", saleCtrl.ListSales)
+		salesRoutes.Get("/import/history", saleCtrl.GetImportHistory)
+		salesRoutes.Post("/preview", saleCtrl.PreviewImport)
+		salesRoutes.Post("/import", saleCtrl.ExecuteImport)
+		salesRoutes.Get("/:id", saleCtrl.GetSale)
 	}
 }

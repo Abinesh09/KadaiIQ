@@ -133,11 +133,82 @@ export interface InventorySummaryData {
   stock_valuation: string | number
 }
 
+// Sales & POS Data Types
+export interface SaleItemData {
+  id: string
+  product_name: string
+  sku?: string
+  barcode?: string
+  variant_id?: string
+  quantity: number
+  unit_price: string | number
+  discount: string | number
+  tax_rate: string | number
+  tax_amount: string | number
+  line_total: string | number
+}
+
+export interface SaleData {
+  id: string
+  source_system: string
+  source_bill_id: string
+  bill_number: string
+  sale_date: string
+  subtotal: string | number
+  discount: string | number
+  tax_amount: string | number
+  grand_total: string | number
+  payment_method: string
+  status: string
+  inventory_deducted: boolean
+  item_count: number
+  items?: SaleItemData[]
+  created_at: string
+}
+
+export interface SaleListData {
+  items: SaleData[]
+  total_count: number
+  page: number
+  page_size: number
+}
+
+export interface ImportPreviewItem {
+  bill_number: string
+  date: string
+  barcode: string
+  product_name: string
+  quantity: number
+  unit_price: string
+  total: string
+  matched: boolean
+}
+
+export interface ImportPreviewData {
+  total_rows: number
+  detected_columns: string[]
+  sample_rows: ImportPreviewItem[]
+}
+
+export interface ImportJobData {
+  id: string
+  source_system: string
+  file_name: string
+  total_records: number
+  imported_records: number
+  failed_records: number
+  duplicate_records: number
+  status: string
+  error_details?: string
+  created_at: string
+}
+
 const BASE_URL = import.meta.env.VITE_API_URL || '/api/v1'
 
-const getHeaders = (): Record<string, string> => {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+const getHeaders = (isFormData = false): Record<string, string> => {
+  const headers: Record<string, string> = {}
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json'
   }
   const token = localStorage.getItem('kadai_token')
   if (token) {
@@ -403,6 +474,83 @@ export const apiService = {
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.message || 'Failed to adjust stock')
+    return data
+  },
+
+  // Sales & Import Endpoints
+  async getSales(params?: {
+    search?: string
+    status?: string
+    from?: string
+    to?: string
+    page?: number
+    page_size?: number
+  }): Promise<ApiResponse<SaleListData>> {
+    const query = new URLSearchParams()
+    if (params?.search) query.set('search', params.search)
+    if (params?.status) query.set('status', params.status)
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+    if (params?.page) query.set('page', params.page.toString())
+    if (params?.page_size) query.set('page_size', params.page_size.toString())
+
+    const res = await fetch(`${BASE_URL}/sales?${query.toString()}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch sales')
+    return data
+  },
+
+  async getSale(id: string): Promise<ApiResponse<SaleData>> {
+    const res = await fetch(`${BASE_URL}/sales/${id}`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch sale details')
+    return data
+  },
+
+  async previewSalesImport(file: File): Promise<ApiResponse<ImportPreviewData>> {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const res = await fetch(`${BASE_URL}/sales/preview`, {
+      method: 'POST',
+      headers: getHeaders(true),
+      body: formData,
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to preview sales file')
+    return data
+  },
+
+  async executeSalesImport(params: {
+    file: File
+    source_system?: string
+    deduct_inventory?: boolean
+  }): Promise<ApiResponse<ImportJobData>> {
+    const formData = new FormData()
+    formData.append('file', params.file)
+    formData.append('source_system', params.source_system || 'ZenBiller')
+    formData.append('deduct_inventory', params.deduct_inventory ? 'true' : 'false')
+
+    const res = await fetch(`${BASE_URL}/sales/import`, {
+      method: 'POST',
+      headers: getHeaders(true),
+      body: formData,
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to import sales data')
+    return data
+  },
+
+  async getImportHistory(): Promise<ApiResponse<ImportJobData[]>> {
+    const res = await fetch(`${BASE_URL}/sales/import/history`, {
+      headers: getHeaders(),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch import history')
     return data
   },
 }
