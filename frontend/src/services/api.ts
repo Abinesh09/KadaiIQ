@@ -273,6 +273,123 @@ export interface FootwearIntelligenceData {
   top_brands: VariantAttributeData[]
 }
 
+// GST Types
+export interface GSTSettingsData {
+  id: string
+  tenant_id: string
+  gstin: string
+  legal_name: string
+  trade_name: string
+  state_code: string
+  state_name: string
+  registration_type: string
+  default_footwear_hsn: string
+  default_gst_rate: string | number
+  enable_composition: boolean
+  updated_at: string
+}
+
+export interface GSTR1RateSlabData {
+  rate_pct: string | number
+  taxable_value: string | number
+  cgst: string | number
+  sgst: string | number
+  igst: string | number
+  total_tax: string | number
+  invoices: number
+}
+
+export interface GSTR1HSNRowData {
+  hsn_code: string
+  description: string
+  uqc: string
+  total_qty: number
+  taxable_value: string | number
+  cgst: string | number
+  sgst: string | number
+  igst: string | number
+  total_tax: string | number
+}
+
+export interface GSTR1SummaryData {
+  return_period: string
+  start_date: string
+  end_date: string
+  gstin: string
+  legal_name: string
+  state_code: string
+  total_taxable_value: string | number
+  total_cgst: string | number
+  total_sgst: string | number
+  total_igst: string | number
+  total_tax_liability: string | number
+  b2c_small_count: number
+  rate_breakdown: GSTR1RateSlabData[]
+  hsn_summary: GSTR1HSNRowData[]
+}
+
+export interface GSTR3BTable31Data {
+  nature_of_supplies: string
+  taxable_value: string | number
+  integrated_tax: string | number
+  central_tax: string | number
+  state_ut_tax: string | number
+  cess: string | number
+}
+
+// Reports Types
+export interface SalesSummaryRowData {
+  bill_number: string
+  sale_date: string
+  payment_method: string
+  item_count: number
+  subtotal: string | number
+  discount: string | number
+  tax_amount: string | number
+  grand_total: string | number
+  status: string
+}
+
+export interface StockValuationRowData {
+  product_name: string
+  product_code: string
+  size: string
+  colour: string
+  sku: string
+  barcode: string
+  current_stock: number
+  purchase_price: string | number
+  selling_price: string | number
+  cost_valuation: string | number
+  retail_valuation: string | number
+  stock_status: string
+}
+
+export interface StockMovementReportRowData {
+  date: string
+  product_name: string
+  barcode: string
+  variant_details: string
+  movement_type: string
+  quantity: number
+  previous_stock: number
+  new_stock: number
+  unit_cost: string | number
+  reference_number?: string
+  notes?: string
+  created_by: string
+}
+
+export interface ReportContainerData<T> {
+  report_name: string
+  generated_at: string
+  date_from?: string
+  date_to?: string
+  total_records: number
+  summary_value?: string | number
+  data: T[]
+}
+
 const BASE_URL = import.meta.env.VITE_API_URL || '/api/v1'
 
 const getHeaders = (isFormData = false): Record<string, string> => {
@@ -708,5 +825,84 @@ export const apiService = {
     const data = await res.json()
     if (!res.ok) throw new Error(data.message || 'Failed to fetch footwear intelligence')
     return data
+  },
+
+  // GST Endpoints
+  async getGSTSettings(): Promise<ApiResponse<GSTSettingsData>> {
+    const res = await fetch(`${BASE_URL}/gst/settings`, { headers: getHeaders() })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch GST settings')
+    return data
+  },
+
+  async updateGSTSettings(payload: Partial<GSTSettingsData>): Promise<ApiResponse<GSTSettingsData>> {
+    const res = await fetch(`${BASE_URL}/gst/settings`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(payload),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to update GST settings')
+    return data
+  },
+
+  async getGSTR1(params?: { month?: string; year?: string }): Promise<ApiResponse<GSTR1SummaryData>> {
+    const query = new URLSearchParams()
+    if (params?.month) query.set('month', params.month)
+    if (params?.year) query.set('year', params.year)
+
+    const res = await fetch(`${BASE_URL}/gst/gstr1?${query.toString()}`, { headers: getHeaders() })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch GSTR-1 summary')
+    return data
+  },
+
+  async getGSTR3B(params?: { month?: string; year?: string }): Promise<ApiResponse<GSTR3BTable31Data>> {
+    const query = new URLSearchParams()
+    if (params?.month) query.set('month', params.month)
+    if (params?.year) query.set('year', params.year)
+
+    const res = await fetch(`${BASE_URL}/gst/gstr3b?${query.toString()}`, { headers: getHeaders() })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch GSTR-3B table')
+    return data
+  },
+
+  // Reports Endpoints
+  async getSalesReport(params?: { from?: string; to?: string }): Promise<ApiResponse<ReportContainerData<SalesSummaryRowData>>> {
+    const query = new URLSearchParams()
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+
+    const res = await fetch(`${BASE_URL}/reports/sales?${query.toString()}`, { headers: getHeaders() })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch sales report')
+    return data
+  },
+
+  async getInventoryReport(): Promise<ApiResponse<ReportContainerData<StockValuationRowData>>> {
+    const res = await fetch(`${BASE_URL}/reports/inventory`, { headers: getHeaders() })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch inventory report')
+    return data
+  },
+
+  async getMovementsReport(params?: { from?: string; to?: string }): Promise<ApiResponse<ReportContainerData<StockMovementReportRowData>>> {
+    const query = new URLSearchParams()
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+
+    const res = await fetch(`${BASE_URL}/reports/movements?${query.toString()}`, { headers: getHeaders() })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to fetch movements report')
+    return data
+  },
+
+  getReportDownloadUrl(type: string, from?: string, to?: string): string {
+    const query = new URLSearchParams()
+    query.set('type', type)
+    if (from) query.set('from', from)
+    if (to) query.set('to', to)
+    return `${BASE_URL}/reports/download?${query.toString()}`
   },
 }

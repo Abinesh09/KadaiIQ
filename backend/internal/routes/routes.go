@@ -41,18 +41,24 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, dbManager *database.DBManag
 		productRepo := repositories.NewProductRepository(dbManager.DB)
 		saleRepo := repositories.NewSaleRepository(dbManager.DB)
 		analyticsRepo := repositories.NewAnalyticsRepository(dbManager.DB)
+		gstRepo := repositories.NewGSTRepository(dbManager.DB)
+		reportRepo := repositories.NewReportRepository(dbManager.DB)
 
 		authService := services.NewAuthService(authRepo, tenantRepo, cfg)
 		tenantService := services.NewTenantService(tenantRepo, authRepo)
 		productService := services.NewProductService(productRepo)
 		saleService := services.NewSaleService(saleRepo, productRepo)
 		analyticsService := services.NewAnalyticsService(analyticsRepo)
+		gstService := services.NewGSTService(gstRepo)
+		reportService := services.NewReportService(reportRepo)
 
 		authCtrl := controllers.NewAuthController(authService)
 		tenantCtrl := controllers.NewTenantController(tenantService)
 		productCtrl := controllers.NewProductController(productService)
 		saleCtrl := controllers.NewSaleController(saleService)
 		analyticsCtrl := controllers.NewAnalyticsController(analyticsService)
+		gstCtrl := controllers.NewGSTController(gstService)
+		reportCtrl := controllers.NewReportController(reportService)
 
 		jwtAuth := middleware.JWTMiddleware(cfg.DatabaseURL)
 		tenantScope := middleware.RequireTenantContext()
@@ -116,5 +122,19 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, dbManager *database.DBManag
 		analyticsRoutes.Get("/products", analyticsCtrl.GetTopProducts)
 		analyticsRoutes.Get("/categories", analyticsCtrl.GetCategorySales)
 		analyticsRoutes.Get("/footwear", analyticsCtrl.GetFootwearIntelligence)
+
+		// GST Compliance Routes (Tenant Scoped)
+		gstRoutes := api.Group("/gst", jwtAuth, tenantScope)
+		gstRoutes.Get("/settings", gstCtrl.GetSettings)
+		gstRoutes.Put("/settings", gstCtrl.UpdateSettings)
+		gstRoutes.Get("/gstr1", gstCtrl.GetGSTR1Summary)
+		gstRoutes.Get("/gstr3b", gstCtrl.GetGSTR3B)
+
+		// Reports & Exports Routes (Tenant Scoped)
+		reportRoutes := api.Group("/reports", jwtAuth, tenantScope)
+		reportRoutes.Get("/sales", reportCtrl.GetSalesSummary)
+		reportRoutes.Get("/inventory", reportCtrl.GetStockValuation)
+		reportRoutes.Get("/movements", reportCtrl.GetStockMovements)
+		reportRoutes.Get("/download", reportCtrl.DownloadReport)
 	}
 }
