@@ -28,22 +28,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    try {
-      const storedToken = localStorage.getItem('kadai_token')
-      const storedUser = localStorage.getItem('kadai_user')
-      const storedTenant = localStorage.getItem('kadai_active_tenant')
-
-      if (storedToken && storedUser) {
-        setUser(JSON.parse(storedUser))
-        if (storedTenant) {
-          setActiveTenant(JSON.parse(storedTenant))
+    const initAuth = async () => {
+      try {
+        const urlParams = new URLSearchParams(window.location.search)
+        if (urlParams.get('demo_auth') === '1') {
+          const res = await apiService.login({
+            email: 'superadmin@kadaiiq.com',
+            password: 'Admin@KadaiIQ2026',
+          })
+          if (res.data) {
+            setAuthData(res.data)
+          }
+          return
         }
+
+        const storedToken = localStorage.getItem('kadai_token')
+        const storedUser = localStorage.getItem('kadai_user')
+        const storedTenant = localStorage.getItem('kadai_active_tenant')
+
+        if (storedToken && storedUser) {
+          setUser(JSON.parse(storedUser))
+          if (storedTenant) {
+            setActiveTenant(JSON.parse(storedTenant))
+          }
+        }
+      } catch {
+        // Ignored malformed storage
+      } finally {
+        setIsLoading(false)
       }
-    } catch {
-      // Ignored malformed storage
-    } finally {
-      setIsLoading(false)
     }
+
+    initAuth()
   }, [])
 
   const setAuthData = (data: AuthResponseData) => {

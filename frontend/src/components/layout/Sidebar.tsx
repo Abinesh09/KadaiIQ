@@ -5,15 +5,18 @@ import {
   Package,
   Boxes,
   ShoppingCart,
+  Receipt,
   TrendingUp,
+  Award,
+  PieChart,
   FileSpreadsheet,
+  Percent,
+  DownloadCloud,
+  Users,
   Settings,
   ShieldCheck,
-  Percent,
-  Users,
   Store,
   X,
-  Sparkles,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/features/auth/AuthContext'
@@ -23,7 +26,6 @@ interface NavItem {
   label: string
   path: string
   icon: React.ElementType
-  badge?: string
 }
 
 interface NavSection {
@@ -33,32 +35,41 @@ interface NavSection {
 
 const navSections: NavSection[] = [
   {
-    title: 'Executive',
+    title: 'EXECUTIVE',
     items: [
-      { label: 'Executive Overview', path: '/', icon: LayoutDashboard },
+      { label: 'Dashboard', path: '/', icon: LayoutDashboard },
     ],
   },
   {
-    title: 'Retail Operations',
+    title: 'RETAIL OPERATIONS',
     items: [
-      { label: 'Product Catalogue', path: '/products', icon: Package },
-      { label: 'Inventory & Stock', path: '/inventory', icon: Boxes },
-      { label: 'Sales & POS Records', path: '/sales', icon: ShoppingCart },
+      { label: 'Products', path: '/products', icon: Package },
+      { label: 'Inventory', path: '/inventory', icon: Boxes },
+      { label: 'Sales', path: '/sales', icon: ShoppingCart },
+      { label: 'Transactions', path: '/sales', icon: Receipt },
     ],
   },
   {
-    title: 'Intelligence & Tax',
+    title: 'BUSINESS INTELLIGENCE',
     items: [
-      { label: 'Sales Analytics', path: '/analytics', icon: TrendingUp, badge: 'Insights' },
-      { label: 'Reports & Exports', path: '/reports', icon: FileSpreadsheet },
-      { label: 'GST Configuration', path: '/gst', icon: Percent },
+      { label: 'Sales Analytics', path: '/analytics', icon: TrendingUp },
+      { label: 'Product Performance', path: '/analytics', icon: Award },
+      { label: 'Category & Brand Analytics', path: '/analytics', icon: PieChart },
     ],
   },
   {
-    title: 'Organisation',
+    title: 'FINANCIAL',
     items: [
-      { label: 'Staff & Roles', path: '/users', icon: Users },
-      { label: 'Store Settings', path: '/settings', icon: Settings },
+      { label: 'Reports', path: '/reports', icon: FileSpreadsheet },
+      { label: 'GST Reports', path: '/gst', icon: Percent },
+      { label: 'Exports', path: '/reports', icon: DownloadCloud },
+    ],
+  },
+  {
+    title: 'ORGANISATION',
+    items: [
+      { label: 'Users & Roles', path: '/users', icon: Users },
+      { label: 'Settings', path: '/settings', icon: Settings },
     ],
   },
 ]
@@ -77,7 +88,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
       {/* Mobile Backdrop Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-xs lg:hidden transition-opacity"
+          className="fixed inset-0 z-40 bg-[#172B4D]/40 backdrop-blur-xs lg:hidden transition-opacity"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -86,23 +97,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
       {/* Sidebar Container */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200/90 flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 select-none shadow-[1px_0_4px_0_rgba(15,23,42,0.03)]',
-          isOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:shadow-none'
+          'fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-[#E5EAF0] flex flex-col transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 select-none shadow-card',
+          isOpen ? 'translate-x-0 shadow-xl' : '-translate-x-full lg:shadow-none'
         )}
       >
         {/* Brand Header */}
-        <div className="h-18 flex items-center justify-between px-6 border-b border-slate-200/80 bg-slate-50/50">
-          <Link to="/" className="flex items-center gap-3.5 group" onClick={onClose}>
-            <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-extrabold text-lg shadow-md ring-2 ring-slate-800 group-hover:scale-105 transition-transform">
-              <span className="font-mono text-emerald-400 font-black tracking-tighter">K</span>
-              <span className="text-white text-xs font-bold tracking-tight">IQ</span>
+        <div className="h-16 flex items-center justify-between px-5 border-b border-[#E5EAF0] bg-white">
+          <Link to="/" className="flex items-center gap-2.5 group" onClick={onClose}>
+            <div className="w-8 h-8 rounded-lg bg-[#172B4D] text-white flex items-center justify-center font-bold text-sm shadow-2xs group-hover:bg-[#243B5A] transition-colors">
+              <span className="font-mono text-[#16A36A] font-extrabold mr-0.5">K</span>
+              <span className="text-white text-xs">IQ</span>
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="text-lg font-black text-slate-950 tracking-tight leading-none">KadaiIQ</span>
-                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse ring-2 ring-emerald-200" />
+                <span className="text-base font-bold text-[#172033] tracking-tight leading-none">KadaiIQ</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#16A36A] inline-block" />
               </div>
-              <span className="text-[10px] font-bold text-blue-600 tracking-wider uppercase mt-1">Retail SaaS Platform</span>
+              <span className="text-[10px] font-medium text-[#64748B] tracking-wider uppercase mt-0.5">Retail Analytics</span>
             </div>
           </Link>
 
@@ -110,25 +121,25 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
           {onClose && (
             <button
               onClick={onClose}
-              className="lg:hidden p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+              className="lg:hidden p-1.5 text-[#64748B] hover:text-[#172033] hover:bg-[#F5F7FA] rounded-md transition-colors cursor-pointer"
               aria-label="Close menu"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           )}
         </div>
 
         {/* Current Active Tenant Card */}
-        <div className="px-5 pt-4 pb-2">
-          <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex items-center gap-3 shadow-2xs">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-              <Store className="w-4 h-4" />
+        <div className="px-3.5 pt-3 pb-1">
+          <div className="bg-[#F5F7FA] border border-[#E5EAF0] rounded-lg p-2.5 flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-md bg-[#172B4D] text-white flex items-center justify-center shrink-0">
+              <Store className="w-3.5 h-3.5" />
             </div>
             <div className="min-w-0 flex-1">
-              <span className="text-xs font-bold text-slate-900 block truncate leading-tight">
+              <span className="text-xs font-semibold text-[#172033] block truncate leading-tight">
                 {activeTenant?.tenant_name || 'KadaiIQ Store'}
               </span>
-              <span className="text-[10px] font-semibold text-slate-400 block truncate mt-0.5">
+              <span className="text-[10px] font-medium text-[#64748B] block truncate mt-0.5">
                 {activeTenant?.role_name || (activeTenant?.is_super_admin ? 'Super Admin' : 'Store Owner')}
               </span>
             </div>
@@ -136,10 +147,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
         </div>
 
         {/* Navigation Sections */}
-        <nav className="flex-1 px-4 py-3 space-y-5 overflow-y-auto">
+        <nav className="flex-1 px-3 py-2 space-y-3.5 overflow-y-auto">
           {navSections.map((section) => (
-            <div key={section.title} className="space-y-1">
-              <div className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+            <div key={section.title} className="space-y-0.5">
+              <div className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#64748B]">
                 {section.title}
               </div>
               {section.items.map((item) => {
@@ -147,38 +158,25 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
                 const isActive = location.pathname === item.path
                 return (
                   <Link
-                    key={item.path}
+                    key={`${section.title}-${item.label}`}
                     to={item.path}
                     onClick={onClose}
                     className={cn(
-                      'group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150',
+                      'group flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors',
                       isActive
-                        ? 'bg-slate-900 text-white shadow-md shadow-slate-900/10'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
+                        ? 'bg-[#172B4D] text-white font-semibold shadow-2xs'
+                        : 'text-[#64748B] hover:bg-[#F5F7FA] hover:text-[#172033]'
                     )}
                   >
-                    <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       <Icon
                         className={cn(
                           'w-4 h-4 transition-colors shrink-0',
-                          isActive ? 'text-emerald-400' : 'text-slate-400 group-hover:text-slate-700'
+                          isActive ? 'text-[#16A36A]' : 'text-[#64748B] group-hover:text-[#172033]'
                         )}
                       />
                       <span className="truncate">{item.label}</span>
                     </div>
-                    {item.badge && (
-                      <span
-                        className={cn(
-                          'text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1',
-                          isActive
-                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30'
-                            : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        )}
-                      >
-                        <Sparkles className="w-2.5 h-2.5" />
-                        {item.badge}
-                      </span>
-                    )}
                   </Link>
                 )
               })}
@@ -187,30 +185,30 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
 
           {/* Platform Administration Section (Super Admin Only) */}
           {isSuperAdmin && (
-            <div className="space-y-1 pt-3 border-t border-slate-200/80">
-              <div className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-purple-600">
-                Platform Admin
+            <div className="space-y-0.5 pt-2 border-t border-[#E5EAF0]">
+              <div className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#64748B]">
+                PLATFORM ADMIN
               </div>
               <Link
                 to="/super-admin"
                 onClick={onClose}
                 className={cn(
-                  'group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150',
+                  'group flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors',
                   location.pathname === '/super-admin'
-                    ? 'bg-purple-900 text-white shadow-md'
-                    : 'text-slate-600 hover:bg-purple-50 hover:text-purple-900'
+                    ? 'bg-[#172B4D] text-white font-semibold'
+                    : 'text-[#64748B] hover:bg-[#F5F7FA] hover:text-[#172033]'
                 )}
               >
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <ShieldCheck
                     className={cn(
                       'w-4 h-4 transition-colors shrink-0',
-                      location.pathname === '/super-admin' ? 'text-purple-300' : 'text-purple-500'
+                      location.pathname === '/super-admin' ? 'text-[#16A36A]' : 'text-[#64748B]'
                     )}
                   />
-                  <span className="truncate">Super Admin Portal</span>
+                  <span className="truncate">Super Admin</span>
                 </div>
-                <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-purple-300 text-purple-700 bg-purple-50">
+                <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-[#E5EAF0] text-[#64748B] bg-white">
                   Root
                 </Badge>
               </Link>
@@ -219,12 +217,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
         </nav>
 
         {/* Footer Info Area */}
-        <div className="p-4 border-t border-slate-200/80 bg-slate-50 text-xs">
-          <div className="flex items-center justify-between text-slate-500 text-[11px]">
-            <span className="font-bold text-slate-700">KadaiIQ SaaS</span>
-            <span className="font-mono text-[10px] font-semibold px-2 py-0.5 bg-slate-200 text-slate-700 rounded-md">v1.0.0</span>
+        <div className="p-3 border-t border-[#E5EAF0] bg-white text-xs">
+          <div className="flex items-center justify-between text-[#64748B] text-[11px]">
+            <span className="font-semibold text-[#172033]">KadaiIQ</span>
+            <span className="font-mono text-[10px] px-1.5 py-0.2 bg-[#F5F7FA] text-[#64748B] rounded border border-[#E5EAF0]">v1.0.0</span>
           </div>
-          <p className="text-[10px] text-slate-400 mt-1">Shared PostgreSQL • Multi-Tenant Isolation</p>
+          <p className="text-[10px] text-[#64748B] mt-0.5">Retail Business Intelligence</p>
         </div>
       </aside>
     </>
